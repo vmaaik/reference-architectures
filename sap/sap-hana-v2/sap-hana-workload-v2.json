@@ -361,7 +361,7 @@
                   "typeHandlerVersion": "2.16",
                   "autoUpgradeMinorVersion": false,
                   "settings": {
-                    "modulesURL": "https://raw.githubusercontent.com/mspnp/reference-architectures/master/sap/sap-hana/extensions/PrepareWSFC.ps1.zip",
+                    "modulesURL": "https://lbsaptest.blob.core.windows.net/nwwindows/PrepareWSFC.ps1.zip",
                     "configurationFunction": "PrepareWSFC.ps1\\PrepareWSFC",
                     "properties": {}
                   },
