@@ -1,3 +1,27 @@
+### Known Issues ###
+
+Issue 1. GitHub has updated to TLS 1.3 and DSC only supports TLS 1.0.  Therefore DSC no longer works on any of the GitHub repository. Hopefully the fix will come in soon.
+
+Work around - I have already implemented this work around. So you shouldn't have to do it.
+  1. Create an Azure Storage account
+  2. Create container in the Blob and give it public access
+  3. Upload all teh DSC extension files to that container
+  4. In the JSON files - change the URL to point to these files in this public storage instead of GitHub
+  
+
+For scripts in larry/sap branch. I have created an Azure Storage account and copied the 2 DSC files up to this account. In addition I updated the URL in the JSON files to point to the these files.
+
+
+Storage Account: lbsaptest
+Resource Group: lbRGSAPStorage 
+Location: East US
+
+Here's the location of the DSC files
+
+https://lbsaptest.blob.core.windows.net/nwwindows/adds.zip
+https://lbsaptest.blob.core.windows.net/nwwindows/PrepareWSFC.ps1.zip
+
+So far from my testing this is working.  Let me know if you encouter any issues.
 
 
 ### Deploy the solution using azbb
