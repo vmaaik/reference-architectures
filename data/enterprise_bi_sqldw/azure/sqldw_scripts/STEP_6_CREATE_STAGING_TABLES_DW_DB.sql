@@ -3,174 +3,185 @@ GO
 
 
 
--- SECTION TO DROP EXTERNAL TABLES 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_Cities') )
-    DROP EXTERNAL TABLE ext.Application_Cities
+-- SECTION TO DROP Staging TABLES 
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_Cities') )
+    DROP  TABLE stg.Application_Cities
 GO
 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_Countries') )
-    DROP EXTERNAL TABLE ext.Application_Countries
-GO
-
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_DeliveryMethods') )
-    DROP EXTERNAL TABLE ext.Application_DeliveryMethods
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_PaymentMethods') )
-    DROP EXTERNAL TABLE ext.Application_PaymentMethods
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_People') )
-    DROP EXTERNAL TABLE ext.Application_People
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_StateProvinces') )
-    DROP EXTERNAL TABLE ext.Application_StateProvinces
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Application_TransactionTypes') )
-    DROP EXTERNAL TABLE ext.Application_TransactionTypes
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.DateDimensions') )
-    DROP EXTERNAL TABLE ext.DateDimensions
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Purchasing_PurchaseOrderLines') )
-    DROP EXTERNAL TABLE ext.Purchasing_PurchaseOrderLines
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Purchasing_PurchaseOrders') )
-    DROP EXTERNAL TABLE ext.Purchasing_PurchaseOrders
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_Countries') )
+    DROP  TABLE stg.Application_Countries
 GO
 
 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Purchasing_SupplierCategories') )
-    DROP EXTERNAL TABLE ext.Purchasing_SupplierCategories
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_DeliveryMethods') )
+    DROP  TABLE stg.Application_DeliveryMethods
 GO
 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Purchasing_Suppliers') )
-    DROP EXTERNAL TABLE ext.Purchasing_Suppliers
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_PaymentMethods') )
+    DROP  TABLE stg.Application_PaymentMethods
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_People') )
+    DROP  TABLE stg.Application_People
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_StateProvinces') )
+    DROP  TABLE stg.Application_StateProvinces
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Application_TransactionTypes') )
+    DROP  TABLE stg.Application_TransactionTypes
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('[stg].[DateDimensions]') )
+    DROP  TABLE [stg].[DateDimensions]
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Purchasing_PurchaseOrderLines') )
+    DROP  TABLE stg.Purchasing_PurchaseOrderLines
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Purchasing_PurchaseOrders') )
+    DROP  TABLE stg.Purchasing_PurchaseOrders
+GO
+
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Purchasing_SupplierCategories') )
+    DROP  TABLE stg.Purchasing_SupplierCategories
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Purchasing_Suppliers') )
+    DROP  TABLE stg.Purchasing_Suppliers
 GO
 
 --SupplierTransactions
 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Purchasing_SupplierTransactions') )
-    DROP EXTERNAL TABLE ext.Purchasing_SupplierTransactions
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Purchasing_SupplierTransactions') )
+    DROP  TABLE stg.Purchasing_SupplierTransactions
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_BuyingGroups') )
+    DROP  TABLE stg.Sales_BuyingGroups
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_CustomerCategories') )
+    DROP  TABLE stg.Sales_CustomerCategories
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_Customers') )
+    DROP  TABLE stg.Sales_Customers
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_CustomerTransactions') )
+    DROP  TABLE stg.Sales_CustomerTransactions
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_InvoiceLines') )
+    DROP  TABLE stg.Sales_InvoiceLines
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_Invoices') )
+    DROP  TABLE stg.Sales_Invoices
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_OrderLines') )
+    DROP  TABLE stg.Sales_OrderLines
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_Orders') )
+    DROP  TABLE stg.Sales_Orders
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Sales_SpecialDeals') )
+    DROP  TABLE stg.Sales_SpecialDeals
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_ColdRoomTemperatures') )
+    DROP  TABLE stg.Warehouse_ColdRoomTemperatures
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_Colors') )
+    DROP  TABLE stg.Warehouse_Colors
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_PackageTypes') )
+    DROP  TABLE stg.Warehouse_PackageTypes
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_StockGroups') )
+    DROP  TABLE stg.Warehouse_StockGroups
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_StockItemHoldings') )
+    DROP  TABLE stg.Warehouse_StockItemHoldings
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_StockItems') )
+    DROP  TABLE stg.Warehouse_StockItems
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_StockItemStockGroups') )
+    DROP  TABLE stg.Warehouse_StockItemStockGroups
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_StockItemTransactions') )
+    DROP  TABLE stg.Warehouse_StockItemTransactions
+GO
+
+IF EXISTS ( SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('stg.Warehouse_VehicleTemperatures') )
+    DROP  TABLE stg.Warehouse_VehicleTemperatures
 GO
 
 
--- SECTION TO DROP EXTERNAL TABLES 
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_BuyingGroups') )
-    DROP EXTERNAL TABLE ext.Sales_BuyingGroups
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_CustomerCategories') )
-    DROP EXTERNAL TABLE ext.Sales_CustomerCategories
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_Customers') )
-    DROP EXTERNAL TABLE ext.Sales_Customers
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_CustomerTransactions') )
-    DROP EXTERNAL TABLE ext.Sales_CustomerTransactions
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_InvoiceLines') )
-    DROP EXTERNAL TABLE ext.Sales_InvoiceLines
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_Invoices') )
-    DROP EXTERNAL TABLE ext.Sales_Invoices
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_OrderLines') )
-    DROP EXTERNAL TABLE ext.Sales_OrderLines
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_Orders') )
-    DROP EXTERNAL TABLE ext.Sales_Orders
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Sales_SpecialDeals') )
-    DROP EXTERNAL TABLE ext.Sales_SpecialDeals
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_ColdRoomTemperatures') )
-    DROP EXTERNAL TABLE ext.Warehouse_ColdRoomTemperatures
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_Colors') )
-    DROP EXTERNAL TABLE ext.Warehouse_Colors
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_PackageTypes') )
-    DROP EXTERNAL TABLE ext.Warehouse_PackageTypes
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_StockGroups') )
-    DROP EXTERNAL TABLE ext.Warehouse_StockGroups
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_StockItemHoldings') )
-    DROP EXTERNAL TABLE ext.Warehouse_StockItemHoldings
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_StockItems') )
-    DROP EXTERNAL TABLE ext.Warehouse_StockItems
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_StockItemStockGroups') )
-    DROP EXTERNAL TABLE ext.Warehouse_StockItemStockGroups
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_StockItemTransactions') )
-    DROP EXTERNAL TABLE ext.Warehouse_StockItemTransactions
-GO
-
-IF EXISTS ( SELECT * FROM sys.external_tables WHERE object_id = OBJECT_ID('ext.Warehouse_VehicleTemperatures') )
-    DROP EXTERNAL TABLE ext.Warehouse_VehicleTemperatures
-GO
-
-
-IF EXISTS (SELECT name FROM sys.schemas WHERE name = N'ext')
+IF EXISTS (SELECT name FROM sys.schemas WHERE name = N'stg')
    BEGIN
-      PRINT 'Dropping the ext schema'
-      DROP SCHEMA [ext]
+      PRINT 'Dropping the stg schema'
+      DROP SCHEMA [stg]
 END
 GO
-PRINT 'Creating the ext schema'
+PRINT 'Creating the stg schema'
 GO
-CREATE SCHEMA [ext]
+CREATE SCHEMA [stg]
 GO
 
 
 PRINT 'CREATING [Application_Cities]'
 GO
 
+
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Application_Cities]
+CREATE  TABLE [stg].[Application_Cities]
 (
 	[CityID] [int] NOT NULL,
 	[CityName] [nvarchar](50) NOT NULL,
 	[StateProvinceID] [int] NOT NULL,
-	[Location] BINARY(8000) NULL,
 	[LatestRecordedPopulation] [bigint] NULL,
 	[LastEditedBy] [int] NOT NULL,
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_Cities/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Application_Cities]'
+GO
 
+INSERT INTO [stg].[Application_Cities]
+SELECT  
+	[CityID] ,
+	[CityName] ,
+	[StateProvinceID],
+	[LatestRecordedPopulation],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo] 
+FROM [ext].[Application_Cities];
+GO
 
 PRINT 'CREATING [Application_Countries]'
 GO
 
-CREATE EXTERNAL TABLE [ext].[Application_Countries]
+CREATE  TABLE [stg].[Application_Countries]
 (
 	[CountryID] [int] NOT NULL,
 	[CountryName] [nvarchar](60) NOT NULL,
@@ -182,19 +193,37 @@ CREATE EXTERNAL TABLE [ext].[Application_Countries]
 	[Continent] [nvarchar](30) NOT NULL,
 	[Region] [nvarchar](30) NOT NULL,
 	[Subregion] [nvarchar](30) NOT NULL,
-	[Border] BINARY(8000) NULL,
 	[LastEditedBy] [int] NOT NULL,
 	[ValidFrom] [datetime2](7) NOT NULL ,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_Countries/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Application_Countries]'
+GO
+
+INSERT INTO [stg].[Application_Countries]
+SELECT
+	[CountryID], 
+	[CountryName] ,
+	[FormalName],
+	[IsoAlpha3Code],
+	[IsoNumericCode],
+	[CountryType],
+	[LatestRecordedPopulation],
+	[Continent],
+	[Region],
+	[Subregion],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM [ext].[Application_Countries];
 
 PRINT 'CREATING [Application_DeliveryMethods]'
 GO
 
-CREATE EXTERNAL TABLE [ext].[Application_DeliveryMethods]
+CREATE TABLE stg.Application_DeliveryMethods
 (
 	[DeliveryMethodID] [int] NOT NULL,
 	[DeliveryMethodName] [nvarchar](50) NOT NULL,
@@ -202,16 +231,26 @@ CREATE EXTERNAL TABLE [ext].[Application_DeliveryMethods]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_DeliveryMethods/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
 
+PRINT 'INSERTING [Application_DeliveryMethods]'
+GO
+INSERT INTO stg.Application_DeliveryMethods
+SELECT 
+	[DeliveryMethodID] ,
+	[DeliveryMethodName],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM ext.Application_DeliveryMethods
 
 
 PRINT 'CREATING [Application_PaymentMethods]'
 GO
 
-CREATE EXTERNAL TABLE [ext].[Application_PaymentMethods]
+CREATE TABLE stg.Application_PaymentMethods
 (
 	[PaymentMethodID] [int] NOT NULL,
 	[PaymentMethodName] [nvarchar](50) NOT NULL,
@@ -219,18 +258,25 @@ CREATE EXTERNAL TABLE [ext].[Application_PaymentMethods]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_PaymentMethods/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Application_PaymentMethods]'
+GO
+INSERT INTO stg.Application_PaymentMethods
+SELECT
+	[PaymentMethodID] ,
+	[PaymentMethodName] ,
+	[LastEditedBy] ,
+	[ValidFrom] ,
+	[ValidTo]
+FROM ext.Application_PaymentMethods
 
-
-
---Application_People
 
 PRINT 'CREATING [Application_People]'
 GO
 
-CREATE EXTERNAL TABLE [ext].[Application_People]
+CREATE TABLE stg.Application_People
 (
 	[PersonID] [int] NOT NULL,
 	[FullName] [nvarchar](50) NOT NULL,
@@ -239,7 +285,6 @@ CREATE EXTERNAL TABLE [ext].[Application_People]
 	[IsPermittedToLogon] [bit] NOT NULL,
 	[LogonName] [nvarchar](50) NULL,
 	[IsExternalLogonProvider] [bit] NOT NULL,
-	[HashedPassword] [varbinary](8000) NULL,
 	[IsSystemUser] [bit] NOT NULL,
 	[IsEmployee] [bit] NOT NULL,
 	[IsSalesperson] [bit] NOT NULL,
@@ -247,52 +292,104 @@ CREATE EXTERNAL TABLE [ext].[Application_People]
 	[PhoneNumber] [nvarchar](20) NULL,
 	[FaxNumber] [nvarchar](20) NULL,
 	[EmailAddress] [nvarchar](256) NULL,
-	[Photo] [varbinary](8000) NULL,
 	[CustomFields] [nvarchar](4000) NULL,
 	[OtherLanguages] [nvarchar](4000) NULL,
 	[LastEditedBy] [int] NOT NULL,
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_People/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Application_People]'
+GO
+INSERT INTO stg.Application_People
+SELECT
+	[PersonID],
+	[FullName],
+	[PreferredName],
+	[SearchName],
+	[IsPermittedToLogon],
+	[LogonName],
+	[IsExternalLogonProvider],
+	[IsSystemUser],
+	[IsEmployee],
+	[IsSalesperson],
+	[UserPreferences],
+	[PhoneNumber],
+	[FaxNumber],
+	[EmailAddress] ,
+	[CustomFields],
+	[OtherLanguages] ,
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM ext.Application_People
 
 
 PRINT 'CREATING [Application_StateProvinces]'
 GO
-CREATE EXTERNAL TABLE [ext]. [Application_StateProvinces](
+CREATE  TABLE stg.Application_StateProvinces(
 	[StateProvinceID] [int] NOT NULL,
 	[StateProvinceCode] [nvarchar](5) NOT NULL,
 	[StateProvinceName] [nvarchar](50) NOT NULL,
 	[CountryID] [int] NOT NULL,
 	[SalesTerritory] [nvarchar](50) NOT NULL,
-	[Border] varbinary(8000) NULL,
 	[LatestRecordedPopulation] [bigint] NULL,
 	[LastEditedBy] [int] NOT NULL,
 	[ValidFrom] [datetime2](7)  NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_StateProvinces/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
-PRINT 'CREATING [Application_SystemParameters]'
+PRINT 'INSERTING [Application_StateProvinces]'
+GO
+INSERT INTO stg.Application_StateProvinces
+
+SELECT
+	[StateProvinceID] ,
+	[StateProvinceCode],
+	[StateProvinceName] ,
+	[CountryID] ,
+	[SalesTerritory] ,
+	[LatestRecordedPopulation],
+	[LastEditedBy] ,
+	[ValidFrom],
+	[ValidTo]
+FROM ext.Application_StateProvinces
+
+PRINT 'CREATING [Application_TransactionTypes]'
+GO
 
 
-CREATE EXTERNAL TABLE [ext].[Application_TransactionTypes](
+CREATE  TABLE [stg].[Application_TransactionTypes](
 	[TransactionTypeID] [int] NOT NULL,
 	[TransactionTypeName] [nvarchar](50) NOT NULL,
 	[LastEditedBy] [int] NOT NULL,
 	[ValidFrom] [datetime2](7)  NOT NULL,
 	[ValidTo] [datetime2](7)
 	)
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Application_TransactionTypes/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Application_SystemParameters]'
+GO
+INSERT INTO stg.[Application_TransactionTypes]
 
---CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[DateDimensions]
-(
+SELECT
+	[TransactionTypeID] ,
+	[TransactionTypeName] ,
+	[LastEditedBy],
+	[ValidFrom] ,
+	[ValidTo] 
+FROM ext.[Application_TransactionTypes]
+
+PRINT 'CREATING [stg].[DateDimensions]'
+GO
+
+CREATE  TABLE [stg].[DateDimensions]
+(	
 	[Date] [datetime2](7) NOT NULL,
 	[DateKey] int NOT NULL,
 	[Day Number] int NOT NULL,
@@ -355,17 +452,22 @@ CREATE EXTERNAL TABLE [ext].[DateDimensions]
 	[Fiscal Year Quarter Key] int,
 	[Fiscal Year Half of Year Key] int,
 	[ISO Week Number] int NOT NULL
-
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_dbo_GetDateDimensions/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [stg].[DateDimensions]'
+GO
+
+INSERT INTO [stg].[DateDimensions] 
+SELECT * FROM [ext].[DateDimensions]
+GO
 
 PRINT 'CREATING [Purchasing_PurchaseOrderLines]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Purchasing_PurchaseOrderLines]
+CREATE  TABLE [stg].[Purchasing_PurchaseOrderLines]
 (
 	[PurchaseOrderLineID] [int] NOT NULL,
 	[PurchaseOrderID] [int] NOT NULL,
@@ -380,15 +482,35 @@ CREATE EXTERNAL TABLE [ext].[Purchasing_PurchaseOrderLines]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Purchasing_PurchaseOrderLines/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Purchasing_PurchaseOrderLines]'
+GO
+
+INSERT INTO  [stg].[Purchasing_PurchaseOrderLines] 
+SELECT 
+	[PurchaseOrderLineID],
+	[PurchaseOrderID],
+	[StockItemID] ,
+	[OrderedOuters] ,
+	[Description],
+	[ReceivedOuters] ,
+	[PackageTypeID],
+	[ExpectedUnitPricePerOuter],
+	[LastReceiptDate] ,
+	[IsOrderLineFinalized],
+	[LastEditedBy] ,
+	[LastEditedWhen] 
+FROM [ext].[Purchasing_PurchaseOrderLines]
+
 
 
 PRINT 'CREATING [Purchasing_PurchaseOrders]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Purchasing_PurchaseOrders]
+CREATE  TABLE [stg].[Purchasing_PurchaseOrders]
 (
 	[PurchaseOrderID] [int] NOT NULL,
 	[SupplierID] [int] NOT NULL,
@@ -403,15 +525,34 @@ CREATE EXTERNAL TABLE [ext].[Purchasing_PurchaseOrders]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Purchasing_PurchaseOrders/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Purchasing_PurchaseOrders]'
+GO
+
+INSERT INTO  [stg].[Purchasing_PurchaseOrders] 
+SELECT
+	[PurchaseOrderID] ,
+	[SupplierID] ,
+	[OrderDate],
+	[DeliveryMethodID],
+	[ContactPersonID],
+	[ExpectedDeliveryDate],
+	[SupplierReference],
+	[IsOrderFinalized] ,
+	[Comments] ,
+	[InternalComments] ,
+	[LastEditedBy] ,
+	[LastEditedWhen]
+FROM [ext].[Purchasing_PurchaseOrders]
+
 
 PRINT 'CREATING [Purchasing_SupplierCategories]'
 GO
 
-
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Purchasing_SupplierCategories]
+CREATE  TABLE [stg].[Purchasing_SupplierCategories]
 (
 	[SupplierCategoryID] [int] NOT NULL,
 	[SupplierCategoryName] [nvarchar](50) NOT NULL,
@@ -419,15 +560,28 @@ CREATE EXTERNAL TABLE [ext].[Purchasing_SupplierCategories]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Purchasing_SupplierCategories/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Purchasing_SupplierCategories]'
+GO
+
+INSERT INTO  [stg].Purchasing_SupplierCategories 
+SELECT
+
+	[SupplierCategoryID],
+	[SupplierCategoryName],
+	[LastEditedBy] ,
+	[ValidFrom],
+	[ValidTo]
+FROM ext.Purchasing_SupplierCategories
+
 
 PRINT 'CREATING [Purchasing_Suppliers]'
 GO
 
-
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Purchasing_Suppliers]
+CREATE  TABLE [stg].[Purchasing_Suppliers]
 (
 	[SupplierID] [int] NOT NULL,
 	[SupplierName] [nvarchar](100) NOT NULL,
@@ -459,15 +613,52 @@ CREATE EXTERNAL TABLE [ext].[Purchasing_Suppliers]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7)  NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Purchasing_Suppliers/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Purchasing_Suppliers]'
+GO
+
+INSERT INTO  [stg].[Purchasing_Suppliers] 
+SELECT
+
+	[SupplierID] ,
+	[SupplierName],
+	[SupplierCategoryID],
+	[PrimaryContactPersonID],
+	[AlternateContactPersonID],
+	[DeliveryMethodID],
+	[DeliveryCityID],
+	[PostalCityID],
+	[SupplierReference],
+	[BankAccountName],
+	[BankAccountBranch] ,
+	[BankAccountCode],
+	[BankAccountNumber],
+	[BankInternationalCode],
+	[PaymentDays],
+	[InternalComments],
+	[PhoneNumber],
+	[FaxNumber] ,
+	[WebsiteURL],
+	[DeliveryAddressLine1],
+	[DeliveryAddressLine2],
+	[DeliveryPostalCode],
+	[DeliveryLocation] ,
+	[PostalAddressLine1],
+	[PostalAddressLine2],
+	[PostalPostalCode],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo] 
+FROM ext.[Purchasing_Suppliers]
 
 
 PRINT 'CREATING [Purchasing_SupplierTransactions]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Purchasing_SupplierTransactions]
+CREATE  TABLE [stg].[Purchasing_SupplierTransactions]
 (
 	[SupplierTransactionID] [int] NOT NULL,
 	[SupplierID] [int] NOT NULL,
@@ -485,15 +676,37 @@ CREATE EXTERNAL TABLE [ext].[Purchasing_SupplierTransactions]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Purchasing_SupplierTransactions/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Purchasing_SupplierTransactions]'
+GO
+
+INSERT INTO  [stg].[Purchasing_SupplierTransactions] 
+SELECT
+
+	[SupplierTransactionID],
+	[SupplierID] ,
+	[TransactionTypeID],
+	[PurchaseOrderID],
+	[PaymentMethodID],
+	[SupplierInvoiceNumber],
+	[TransactionDate],
+	[AmountExcludingTax],
+	[TaxAmount],
+	[TransactionAmount],
+	[OutstandingBalance],
+	[FinalizationDate],
+	[IsFinalized],
+	[LastEditedBy],
+	[LastEditedWhen]
+
+FROM ext.[Purchasing_SupplierTransactions]
 
 PRINT 'CREATING [Sales_BuyingGroups]'
 GO
 
---CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_BuyingGroups]
+CREATE  TABLE [stg].[Sales_BuyingGroups]
 (
 	[BuyingGroupID] [int] NOT NULL,
 	[BuyingGroupName] [nvarchar](50) NOT NULL,
@@ -501,14 +714,27 @@ CREATE EXTERNAL TABLE [ext].[Sales_BuyingGroups]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_BuyingGroups/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Purchasing_PurchaseOrderLines]'
+GO
+
+INSERT INTO  [stg].[Sales_BuyingGroups] 
+SELECT
+	[BuyingGroupID] ,
+	[BuyingGroupName],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM  [ext].[Sales_BuyingGroups] 
+
+
 
 PRINT 'CREATING [Sales_CustomerCategories]'
 GO
 
---CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_CustomerCategories]
+CREATE  TABLE [stg].[Sales_CustomerCategories]
 (
 	[CustomerCategoryID] [int] NOT NULL,
 	[CustomerCategoryName] [nvarchar](50) NOT NULL,
@@ -516,14 +742,28 @@ CREATE EXTERNAL TABLE [ext].[Sales_CustomerCategories]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_CustomerCategories/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_CustomerCategories]'
+GO
+
+INSERT INTO  [stg].[Sales_CustomerCategories] 
+SELECT
+	[CustomerCategoryID],
+	[CustomerCategoryName],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM [ext].[Sales_CustomerCategories] 
+
+
 
 PRINT 'CREATING [Sales_Customers]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_Customers]
+CREATE  TABLE [stg].[Sales_Customers]
 (
 	[CustomerID] [int] NOT NULL,
 	[CustomerName] [nvarchar](100) NOT NULL,
@@ -557,15 +797,53 @@ CREATE EXTERNAL TABLE [ext].[Sales_Customers]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_Customers/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_Customers]'
+GO
+
+INSERT INTO  [stg].[Sales_Customers] 
+SELECT
+	[CustomerID],
+	[CustomerName] ,
+	[BillToCustomerID],
+	[CustomerCategoryID],
+	[BuyingGroupID],
+	[PrimaryContactPersonID],
+	[AlternateContactPersonID],
+	[DeliveryMethodID],
+	[DeliveryCityID],
+	[PostalCityID],
+	[CreditLimit],
+	[AccountOpenedDate],
+	[StandardDiscountPercentage],
+	[IsStatementSent] ,
+	[IsOnCreditHold] ,
+	[PaymentDays] ,
+	[PhoneNumber],
+	[FaxNumber],
+	[DeliveryRun],
+	[RunPosition],
+	[WebsiteURL] ,
+	[DeliveryAddressLine1],
+	[DeliveryAddressLine2],
+	[DeliveryPostalCode] ,
+	[DeliveryLocation],
+	[PostalAddressLine1],
+	[PostalAddressLine2],
+	[PostalPostalCode],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM  [ext].[Sales_Customers] 
 
 
 PRINT 'CREATING [Sales_CustomerTransactions]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_CustomerTransactions]
+CREATE  TABLE [stg].[Sales_CustomerTransactions]
 (
 	[CustomerTransactionID] [int] NOT NULL,
 	[CustomerID] [int] NOT NULL,
@@ -582,14 +860,35 @@ CREATE EXTERNAL TABLE [ext].[Sales_CustomerTransactions]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_CustomerTransactions/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_CustomerTransactions]'
+GO
+
+INSERT INTO  [stg].[Sales_CustomerTransactions] 
+SELECT
+	[CustomerTransactionID] ,
+	[CustomerID],
+	[TransactionTypeID],
+	[InvoiceID],
+	[PaymentMethodID],
+	[TransactionDate],
+	[AmountExcludingTax],
+	[TaxAmount],
+	[TransactionAmount],
+	[OutstandingBalance],
+	[FinalizationDate],
+	[IsFinalized],
+	[LastEditedBy],
+	[LastEditedWhen]
+FROM  [stg].[Sales_CustomerTransactions] 
 
 PRINT 'CREATING [Sales_InvoiceLines]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_InvoiceLines]
+CREATE  TABLE [stg].[Sales_InvoiceLines]
 (
 	[InvoiceLineID] [int] NOT NULL,
 	[InvoiceID] [int] NOT NULL,
@@ -605,16 +904,38 @@ CREATE EXTERNAL TABLE [ext].[Sales_InvoiceLines]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_InvoiceLines/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Sales_InvoiceLines]'
+GO
+
+INSERT INTO  [stg].[Sales_InvoiceLines] 
+SELECT
+	[InvoiceLineID] ,
+	[InvoiceID],
+	[StockItemID],
+	[Description],
+	[PackageTypeID],
+	[Quantity] ,
+	[UnitPrice],
+	[TaxRate] ,
+	[TaxAmount],
+	[LineProfit],
+	[ExtendedPrice],
+	[LastEditedBy],
+	[LastEditedWhen]
+FROM  [ext].[Sales_InvoiceLines] 
+
+PRINT 'CREATING [Sales_InvoiceLines]'
+GO
 --Sales_Invoices
 
 PRINT 'CREATING [Sales_Invoices]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_Invoices]
+CREATE  TABLE [stg].[Sales_Invoices]
 (
 	[InvoiceID] [int] NOT NULL,
 	[CustomerID] [int] NOT NULL,
@@ -642,14 +963,48 @@ CREATE EXTERNAL TABLE [ext].[Sales_Invoices]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_Invoices/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_Invoices]'
+GO
+
+INSERT INTO  [stg].[Sales_Invoices] 
+SELECT
+	[InvoiceID] ,
+	[CustomerID],
+	[BillToCustomerID],
+	[OrderID] ,
+	[DeliveryMethodID],
+	[ContactPersonID] ,
+	[AccountsPersonID],
+	[SalespersonPersonID] ,
+	[PackedByPersonID] ,
+	[InvoiceDate],
+	[CustomerPurchaseOrderNumber] ,
+	[IsCreditNote] ,
+	[CreditNoteReason] ,
+	[Comments],
+	[DeliveryInstructions] ,
+	[InternalComments] ,
+	[TotalDryItems],
+	[TotalChillerItems] ,
+	[DeliveryRun] ,
+	[RunPosition] ,
+	[ReturnedDeliveryData] ,
+	[ConfirmedDeliveryTime],
+	[ConfirmedReceivedBy] ,
+	[LastEditedBy] ,
+	[LastEditedWhen]
+FROM [ext].[Sales_Invoices]
+
+
 
 PRINT 'CREATING [Sales_OrderLines]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_OrderLines]
+CREATE  TABLE [stg].[Sales_OrderLines]
 (
 	[OrderLineID] [int] NOT NULL,
 	[OrderID] [int] NOT NULL,
@@ -664,14 +1019,33 @@ CREATE EXTERNAL TABLE [ext].[Sales_OrderLines]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_OrderLines/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_OrderLines]'
+GO
+
+INSERT INTO  [stg].[Sales_OrderLines]
+SELECT
+	[OrderLineID],
+	[OrderID] ,
+	[StockItemID] ,
+	[Description] ,
+	[PackageTypeID],
+	[Quantity] ,
+	[UnitPrice],
+	[TaxRate],
+	[PickedQuantity] ,
+	[PickingCompletedWhen],
+	[LastEditedBy],
+	[LastEditedWhen]
+FROM [ext].[Sales_OrderLines]
 
 PRINT 'CREATING [Sales_Orders]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Sales_Orders]
+CREATE  TABLE [stg].[Sales_Orders]
 (
 	[OrderID] [int] NOT NULL,
 	[CustomerID] [int] NOT NULL,
@@ -690,13 +1064,36 @@ CREATE EXTERNAL TABLE [ext].[Sales_Orders]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_Orders/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Sales_Orders]'
+GO
+
+INSERT INTO  [stg].[Sales_Orders]
+SELECT
+	[OrderID] ,
+	[CustomerID],
+	[SalespersonPersonID] ,
+	[PickedByPersonID],
+	[ContactPersonID] ,
+	[BackorderOrderID],
+	[OrderDate],
+	[ExpectedDeliveryDate],
+	[CustomerPurchaseOrderNumber],
+	[IsUndersupplyBackordered],
+	[Comments] ,
+	[DeliveryInstructions],
+	[InternalComments],
+	[PickingCompletedWhen] ,
+	[LastEditedBy],
+	[LastEditedWhen] 
+FROM [ext].[Sales_Orders]
 
 
 PRINT 'CREATING [Sales_SpecialDeals]'
 GO
-CREATE EXTERNAL TABLE [ext].[Sales_SpecialDeals]
+CREATE  TABLE [stg].[Sales_SpecialDeals]
 (
 	[SpecialDealID] [int] NOT NULL,
 	[StockItemID] [int] NULL,
@@ -713,15 +1110,35 @@ CREATE EXTERNAL TABLE [ext].[Sales_SpecialDeals]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Sales_SpecialDeals/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Sales_SpecialDeals]'
+GO
+
+INSERT INTO  [stg].[Sales_SpecialDeals]
+SELECT
+	[SpecialDealID] ,
+	[StockItemID] ,
+	[CustomerID] ,
+	[BuyingGroupID],
+	[CustomerCategoryID] ,
+	[StockGroupID] ,
+	[DealDescription] ,
+	[StartDate],
+	[EndDate] ,
+	[DiscountAmount] ,
+	[DiscountPercentage] ,
+	[UnitPrice] ,
+	[LastEditedBy] ,
+	[LastEditedWhen]
+FROM [ext].[Sales_SpecialDeals]
 
 PRINT 'CREATING [Warehouse_ColdRoomTemperatures]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_ColdRoomTemperatures]
+CREATE  TABLE [stg].[Warehouse_ColdRoomTemperatures]
 (
 	[ColdRoomTemperatureID] [bigint]  NOT NULL,
 	[ColdRoomSensorNumber] [int] NOT NULL,
@@ -730,14 +1147,28 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_ColdRoomTemperatures]
 	[ValidFrom] [datetime2](7)  NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_ColdRoomTemperatures/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_ColdRoomTemperatures]'
+GO
+
+INSERT INTO  [stg].[Warehouse_ColdRoomTemperatures] 
+SELECT
+
+	[ColdRoomTemperatureID] ,
+	[ColdRoomSensorNumber] ,
+	[RecordedWhen] ,
+	[Temperature] ,
+	[ValidFrom] ,
+	[ValidTo] 
+FROM [ext].[Warehouse_ColdRoomTemperatures] 
 
 PRINT 'CREATING [Warehouse_Colors]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_Colors]
+CREATE  TABLE [stg].[Warehouse_Colors]
 (
 	[ColorID] [int] NOT NULL,
 	[ColorName] [nvarchar](20) NOT NULL,
@@ -745,14 +1176,27 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_Colors]
 	[ValidFrom] [datetime2](7)  NOT NULL,
 	[ValidTo] [datetime2](7)  NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_Colors/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_Colors]'
+GO
+
+INSERT INTO  [stg].[Warehouse_Colors] 
+SELECT
+	[ColorID] ,
+	[ColorName],
+	[LastEditedBy],
+	[ValidFrom],
+	[ValidTo]
+FROM [ext].[Warehouse_Colors] 
+
 
 PRINT 'CREATING [Warehouse_PackageTypes]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_PackageTypes]
+CREATE  TABLE [stg].[Warehouse_PackageTypes]
 (
 	[PackageTypeID] [int] NOT NULL,
 	[PackageTypeName] [nvarchar](50) NOT NULL,
@@ -760,14 +1204,26 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_PackageTypes]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_PackageTypes/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_PackageTypes]'
+GO
+
+INSERT INTO  [stg].[Warehouse_PackageTypes] 
+SELECT
+	[PackageTypeID],
+	[PackageTypeName],
+	[LastEditedBy] ,
+	[ValidFrom] ,
+	[ValidTo]
+FROM [ext].[Warehouse_PackageTypes]
 
 PRINT 'CREATING [Warehouse_StockGroups]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_StockGroups]
+CREATE  TABLE [stg].[Warehouse_StockGroups]
 (
 	[StockGroupID] [int] NOT NULL,
 	[StockGroupName] [nvarchar](50) NOT NULL,
@@ -775,14 +1231,26 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_StockGroups]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_StockGroups/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_StockGroups]'
+GO
+
+INSERT INTO  [stg].[Warehouse_StockGroups] 
+SELECT
+	[StockGroupID],
+	[StockGroupName] ,
+	[LastEditedBy],
+	[ValidFrom] ,
+	[ValidTo] 
+FROM [ext].[Warehouse_StockGroups]
 
 PRINT 'CREATING [Warehouse_StockItemHoldings]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemHoldings]
+CREATE  TABLE [stg].[Warehouse_StockItemHoldings]
 (
 	[StockItemID] [int] NOT NULL,
 	[QuantityOnHand] [int] NOT NULL,
@@ -794,16 +1262,31 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemHoldings]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_StockItemHoldings/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Warehouse_StockItemHoldings]'
+GO
+
+INSERT INTO  [stg].[Warehouse_StockItemHoldings] 
+SELECT
+	[StockItemID] ,
+	[QuantityOnHand],
+	[BinLocation] ,
+	[LastStocktakeQuantity] ,
+	[LastCostPrice] ,
+	[ReorderLevel] ,
+	[TargetStockLevel] ,
+	[LastEditedBy] ,
+	[LastEditedWhen] 
+FROM [ext].[Warehouse_StockItemHoldings]
 
 
 PRINT 'CREATING [Warehouse_StockItems]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_StockItems]
+CREATE  TABLE [stg].[Warehouse_StockItems]
 (
 	[StockItemID] [int] NOT NULL,
 	[StockItemName] [nvarchar](100) NOT NULL,
@@ -831,15 +1314,46 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_StockItems]
 	[ValidFrom] [datetime2](7) NOT NULL,
 	[ValidTo] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_StockItems/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
+PRINT 'INSERTING [Warehouse_StockItems]'
+GO
+
+INSERT INTO  [stg].[Warehouse_StockItems] 
+SELECT
+	[StockItemID],
+	[StockItemName] ,
+	[SupplierID],
+	[ColorID],
+	[UnitPackageID],
+	[OuterPackageID] ,
+	[Brand],
+	[Size] ,
+	[LeadTimeDays] ,
+	[QuantityPerOuter] ,
+	[IsChillerStock],
+	[Barcode] ,
+	[TaxRate] ,
+	[UnitPrice],
+	[RecommendedRetailPrice] ,
+	[TypicalWeightPerUnit],
+	[MarketingComments],
+	[InternalComments] ,
+	[Photo] ,
+	[CustomFields] ,
+	[Tags] ,
+	[SearchDetails],
+	[LastEditedBy],
+	[ValidFrom] ,
+	[ValidTo] 
+FROM [ext].[Warehouse_StockItems]
 
 PRINT 'CREATING [Warehouse_StockItemStockGroups]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemStockGroups]
+CREATE  TABLE [stg].[Warehouse_StockItemStockGroups]
 (
 	[StockItemStockGroupID] [int] NOT NULL,
 	[StockItemID] [int] NOT NULL,
@@ -847,8 +1361,20 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemStockGroups]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_StockItemStockGroups/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_StockItemStockGroups]'
+GO
+
+INSERT INTO  [stg].[Warehouse_StockItemStockGroups] 
+SELECT
+	[StockItemStockGroupID] ,
+	[StockItemID] ,
+	[StockGroupID],
+	[LastEditedBy],
+	[LastEditedWhen]
+FROM [ext].[Warehouse_StockItemStockGroups]
 
 
 
@@ -856,7 +1382,7 @@ PRINT 'CREATING [Warehouse_StockItemTransactions]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemTransactions]
+CREATE  TABLE [stg].[Warehouse_StockItemTransactions]
 (
 	[StockItemTransactionID] [int] NOT NULL,
 	[StockItemID] [int] NOT NULL,
@@ -870,14 +1396,32 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_StockItemTransactions]
 	[LastEditedBy] [int] NOT NULL,
 	[LastEditedWhen] [datetime2](7) NOT NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_StockItemTransactions/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
+
+PRINT 'INSERTING [Warehouse_StockItemTransactions]'
+GO
+
+INSERT INTO  [stg].[Warehouse_StockItemTransactions] 
+SELECT
+	[StockItemTransactionID] ,
+	[StockItemID],
+	[TransactionTypeID],
+	[CustomerID],
+	[InvoiceID] ,
+	[SupplierID],
+	[PurchaseOrderID] ,
+	[TransactionOccurredWhen] ,
+	[Quantity],
+	[LastEditedBy] ,
+	[LastEditedWhen]
+FROM [ext].[Warehouse_StockItemTransactions]
 
 PRINT 'CREATING [Warehouse_VehicleTemperatures]'
 GO
 
 --CREATE AND DROP SECTION
-CREATE EXTERNAL TABLE [ext].[Warehouse_VehicleTemperatures]
+CREATE  TABLE [stg].[Warehouse_VehicleTemperatures]
 (
 	[VehicleTemperatureID] [bigint]  NOT NULL,
 	[VehicleRegistration] [nvarchar](20)  NOT NULL,
@@ -888,8 +1432,20 @@ CREATE EXTERNAL TABLE [ext].[Warehouse_VehicleTemperatures]
 	[IsCompressed] [bit] NOT NULL,
 	[CompressedSensorData] [varbinary](8000) NULL
 )
-WITH (DATA_SOURCE = [WAREHOUSEEXTERNALDATASOURCE],LOCATION = N'/WideWorldImporters_Warehouse_VehicleTemperatures/',FILE_FORMAT = [UNCOMPRESSEDCSV],REJECT_TYPE = VALUE,REJECT_VALUE = 0)
+WITH (HEAP);
 GO
 
-PRINT 'ALL DONE'
---GO
+PRINT 'INSERTING [Warehouse_VehicleTemperatures]'
+GO
+
+INSERT INTO  [stg].[Warehouse_VehicleTemperatures] 
+SELECT
+	[VehicleTemperatureID],
+	[VehicleRegistration] ,
+	[ChillerSensorNumber] ,
+	[RecordedWhen] ,
+	[Temperature] ,
+	[FullSensorData] ,
+	[IsCompressed],
+	[CompressedSensorData] 
+FROM [ext].[Warehouse_VehicleTemperatures]
