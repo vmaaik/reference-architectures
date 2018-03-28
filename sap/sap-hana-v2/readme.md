@@ -1,3 +1,6 @@
+
+
+
 ### Known Issues  ###
 
 Issue 1. GitHub has updated to TLS 1.3 and DSC only supports TLS 1.0.  Therefore DSC no longer works on any of the GitHub repository. 
@@ -28,26 +31,31 @@ So far from my testing this is working.  Let me know if you encouter any issues.
 
 ### Deploy the solution using azbb
 
+
+
 To deploy the SAP NetWeaver Windows  reference architecture, follow these steps:
 
-1. Navigate to the `sap\sap-hana-v2` folder for the repository you cloned in step 1 of the pre-requisites above.
+1. Install the Azure Building Blocks from https://github.com/mspnp/template-building-blocks/wiki/Install-Azure-Building-Blocks
 
-2. Login to Azure 'az login'
+2. Clone the GitHub repository : https://github.com/mspnp/reference-architectures/tree/larry/sap
 
-3. The parameter file specifies a default adminstrator user name and password for each VM in the deployment. You must change these before you deploy the reference architecture. Open the `sap-hana-v2.json` and 'sap-hana-workload-v2.json' file and replace each **adminUsername** and **adminPassword** field with your new settings.   Save the file.
+3. Navigate to the `sap\sap-hana-v2` folder for the repository you cloned in step 1 of the pre-requisites above.
 
-4. Deploy the 1st part of  reference architecture using the **azbb** command line tool as shown below.
+4. Login to Azure 'az login'
+
+5. The parameter file specifies a default adminstrator user name and password for each VM in the deployment. You must change these before you deploy the reference architecture. Open the `sap-hana-v2.json` and 'sap-hana-workload-v2.json' file and replace each **adminUsername** and **adminPassword** field with your new settings.   Save the file.
+
+6. Deploy the 1st part of  reference architecture using the **azbb** command line tool as shown below.
 
   ```bash
   azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p sap-hana-v2.json --deploy
   ```
 
-5. Deploy the 2nd part of  reference architecture using the **azbb** command line tool as shown below.
+7. Deploy the 2nd part of  reference architecture using the **azbb** command line tool as shown below.
 
   ```bash
   azbb -s <your subscription_id> -g <your resource_group_name> -l <azure region> -p sap-hana-workload-v2.json --deploy
   ```
 
 
-For more information on deploying this sample reference architecture using Azure Building Blocks, visit the [GitHub repository][git].
 
