@@ -3,7 +3,7 @@
 
 ### Known Issues  ###
 
-Issue 1. GitHub has updated to TLS 1.3 and DSC only supports TLS 1.0.  Therefore DSC no longer works on any of the GitHub repository. 
+**Issue 1.** GitHub has updated to TLS 1.3 and DSC only supports TLS 1.0.  Therefore DSC no longer works on any of the GitHub repository. 
 
 **An update to fix this issue is expected by April 4 2018**
 
