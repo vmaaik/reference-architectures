@@ -45,8 +45,8 @@
             "identity": {
                 "type": "SystemAssigned"
             },
-        
-            "resources": 
+
+            "resources":
             [
                 {
                     "name": "[concat(parameters('factoryName'), '/ETLCutoff')]",
@@ -151,7 +151,7 @@
                                 "type": "SqlServerStoredProcedure",
                                 "dependsOn": [
                                     {
-                                        
+
                                         "activity": "GetLastETLCutoff-Sales",
                                         "dependencyConditions": [
                                             "Succeeded"
@@ -1581,12 +1581,30 @@
                                 "name": "SalesPipeline",
                                 "type": "ExecutePipeline",
                                 "dependsOn": [
-                                    {
-                                        "activity": "GetCutOff",
-                                        "dependencyConditions": [
-                                            "Succeeded"
-                                        ]
-                                    }
+                                  {
+                                      "activity": "CityPipeline",
+                                      "dependencyConditions": [
+                                          "Succeeded"
+                                      ]
+                                  },
+                                  {
+                                      "activity": "CustomerPipeline",
+                                      "dependencyConditions": [
+                                          "Succeeded"
+                                      ]
+                                  },
+                                  {
+                                      "activity": "EmployeePipeline",
+                                      "dependencyConditions": [
+                                          "Succeeded"
+                                      ]
+                                  },
+                                  {
+                                      "activity": "StockItemsPipeline",
+                                      "dependencyConditions": [
+                                          "Succeeded"
+                                      ]
+                                  }
                                 ],
                                 "typeProperties": {
                                     "pipeline": {
@@ -1723,6 +1741,31 @@
                                         }
                                     }
                                 }
+                            },
+                            {
+                                "name": "PopulationPipeline",
+                                "type": "ExecutePipeline",
+                                "dependsOn": [
+                                    {
+                                        "activity": "SalesPipeline",
+                                        "dependencyConditions": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                ],
+                                "typeProperties": {
+                                    "pipeline": {
+                                        "referenceName": "CityPopulationPipeline",
+                                        "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true,
+                                    "parameters": {
+                                        "CutoffTime": {
+                                            "value": "@activity('GetCutOff').output.firstRow.CurrentCutoff",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
                             }
                         ]
                     },
@@ -1733,7 +1776,8 @@
                         "[concat(variables('factoryId'), '/pipelines/CityPipeline')]",
                         "[concat(variables('factoryId'), '/pipelines/CustomerPipeline')]",
                         "[concat(variables('factoryId'), '/pipelines/EmployeePipeline')]",
-                        "[concat(variables('factoryId'), '/pipelines/StockItemsPipeline')]"
+                        "[concat(variables('factoryId'), '/pipelines/StockItemsPipeline')]",
+                        "[concat(variables('factoryId'), '/pipelines/CityPopulationPipeline')]"
                     ]
                 },
                 {
@@ -2876,4 +2920,3 @@
         }
     ]
 }
-            
