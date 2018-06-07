@@ -36,9 +36,20 @@
         "metadata": {
           "description": "Name of Event Hub"
         }
+      },
+      "partitionCount": {
+        "type": "int",
+        "defaultValue": 32,
+        "minValue": 2,
+        "maxValue": 32,
+        "metadata": {
+          "description": "Number of partitions chosen"
+        }
       }
     },
     "variables": {
+      "defaultSASKeyName": "RootManageSharedAccessKey",
+      "authRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaceName'), variables('defaultSASKeyName'))]"
     },
     "resources": [
       {
@@ -62,7 +73,9 @@
             "dependsOn": [
               "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
             ],
-            "properties": {},
+            "properties": {
+              "partitionCount": "[parameters('partitionCount')]"
+            },
             "resources": [
             ]
           }
@@ -70,5 +83,33 @@
       }
     ],
     "outputs": {
+      "eventHubName" : {
+        "type":"string",
+        "value":"[parameters('eventHubName')]"
+      },
+      "eventHubNamespace" : {
+        "type":"string",
+        "value":"[parameters('namespaceName')]"
+      },
+      "sharedAccessPolicyPrimaryKey": {
+        "type": "string",
+        "value": "[listkeys(variables('authRuleResourceId'), '2017-04-01').primaryKey]"
+      },
+      "sharedAccessPolicyName": {
+        "type": "string",
+        "value": "[variables('defaultSASKeyName')]"
+      },
+      "namespaceConnectionString": {
+        "type": "string",
+        "value": "[listkeys(variables('authRuleResourceId'), '2017-04-01').primaryConnectionString]"
+      },
+      "partitionCount": {
+        "type": "string",
+        "value": "[parameters('partitionCount')]"
+      },
+      "resourceGroup":{
+        "type": "string",
+        "value": "[resourceGroup().name]"
+      }
     }
   }
