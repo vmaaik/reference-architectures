@@ -104,7 +104,7 @@
         "value": "[listkeys(variables('authRuleResourceId'), '2017-04-01').primaryConnectionString]"
       },
       "partitionCount": {
-        "type": "string",
+        "type": "int",
         "value": "[parameters('partitionCount')]"
       },
       "resourceGroup":{
