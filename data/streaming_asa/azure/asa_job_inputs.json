@@ -1,0 +1,20 @@
+{
+    "asajobinputs": [
+        {
+            "Name": "location",
+            "Value": "location1"
+        },
+        {
+            "Name": "EventHubName",
+            "Value": "EventHubName1"
+        },
+        {
+            "Name": "ServiceBusNamespace",
+            "Value": "ServiceBusNamespace1"
+        },
+        {
+            "Name": "server",
+            "Value": "server1"
+        }
+    ]
+}

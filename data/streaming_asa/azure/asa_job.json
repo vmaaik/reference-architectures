@@ -1,0 +1,54 @@
+{
+	"location": "<location>",
+	"properties": {
+		"sku": {
+			"name": "standard"
+		},
+		"EventsOutOfOrderMaxDelayInSeconds": 5,
+		"EventsOutOfOrderPolicy": "Adjust",
+		"inputs": [{
+			"name": "EntryStream",
+			"properties": {
+				"type": "stream",
+				"serialization": {
+					"type": "JSON",
+					"properties": {
+						"encoding": "UTF8"
+					}
+				},
+				"datasource": {
+					"type": "Microsoft.ServiceBus/EventHub",
+					"properties": {
+						"EventHubName": "<EventHubName>",
+						"ServiceBusNamespace": "<ServiceBusNamespace>",
+						"SharedAccessPolicyKey": "<SharedAccessPolicyKey>",
+						"SharedAccessPolicyName": "<SharedAccessPolicyName>",
+						"SourcePartitionCount": 4
+					}
+				}
+			}
+		}],
+		"transformation": {
+			"name": "ProcessSampleData",
+			"properties": {
+				"streamingUnits": 1,
+				"query": "sampleQuery"
+			}
+		},
+		"outputs": [{
+			"name": "SQLSink",
+			"properties": {
+				"datasource": {
+					"type": "Microsoft.Sql/Server/Database",
+					"properties": {
+						"server": "<server>",
+						"database": "<database>",
+						"table": "table",
+						"user": "<user>",
+						"password": "<password>"
+					}
+				}
+			}
+		}]
+	}
+}
