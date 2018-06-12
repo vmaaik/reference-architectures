@@ -1,5 +1,5 @@
 {
-	"location": "<location>",
+	"location": "location1",
 	"properties": {
 		"sku": {
 			"name": "standard"
@@ -19,8 +19,8 @@
 				"datasource": {
 					"type": "Microsoft.ServiceBus/EventHub",
 					"properties": {
-						"EventHubName": "<EventHubName>",
-						"ServiceBusNamespace": "<ServiceBusNamespace>",
+						"EventHubName": "EventHubName1",
+						"ServiceBusNamespace": "ServiceBusNamespace1",
 						"SharedAccessPolicyKey": "<SharedAccessPolicyKey>",
 						"SharedAccessPolicyName": "<SharedAccessPolicyName>",
 						"SourcePartitionCount": 4
@@ -41,7 +41,7 @@
 				"datasource": {
 					"type": "Microsoft.Sql/Server/Database",
 					"properties": {
-						"server": "<server>",
+						"server": "server1",
 						"database": "<database>",
 						"table": "table",
 						"user": "<user>",
