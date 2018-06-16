@@ -5,8 +5,8 @@ namespace taxi
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
-    [JsonObject(NamingStrategyType=typeof(CamelCaseNamingStrategy))]
-    public class TaxiRide
+    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
+    public class TaxiRide : ITaxiEvent
     {
         public TaxiRide()
         {
@@ -21,6 +21,8 @@ namespace taxi
         [JsonProperty]
         public string VendorId { get; set; }
 
+        [JsonProperty]
+        public string PartitionKey { get; set; }
         [JsonProperty]
         public int RateCode { get; set; }
 
@@ -53,6 +55,17 @@ namespace taxi
 
         [JsonProperty]
         public float DropoffLat { get; set; }
+
+        public string BuildPartitionKey()
+        {
+
+            return String.Format("{0}_{1}_{2}"
+           , Medallion.ToString()
+           , HackLicense.ToString()
+           , VendorId
+           );
+        }
+
 
         public static TaxiRide FromString(string line)
         {
@@ -91,12 +104,18 @@ namespace taxi
                 ride.PickupLat = float.TryParse(tokens[11], out result) ? result : 0.0f;
                 ride.DropoffLon = float.TryParse(tokens[12], out result) ? result : 0.0f;
                 ride.DropoffLat = float.TryParse(tokens[13], out result) ? result : 0.0f;
+                ride.PartitionKey = ride.BuildPartitionKey();
                 return ride;
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Invalid record: {line}", ex);
             }
+        }
+
+        public static string GetPartitionKey(TaxiRide taxiRide)
+        {
+                return taxiRide.PartitionKey;
         }
     }
 }
