@@ -14,7 +14,7 @@
 
     class Program
     {
-        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
+        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory, Func<T, string> partitionKeyFinder,
             EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
         {
 
@@ -22,7 +22,7 @@
             {
                 throw new ArgumentNullException(nameof(pathList));
             }
-        
+
             if (factory == null)
             {
                 throw new ArgumentNullException(nameof(factory));
@@ -53,12 +53,17 @@
                         int lines = 0;
                         var batches = reader.ReadLines()
                             .Skip(1)
-                            .Select(s => {
-                                lines++;
-                                return new EventData(Encoding.UTF8.GetBytes(
-                                    JsonConvert.SerializeObject(factory(s))));
+                            .Select(s =>
+                            {
+
+                                var mappedEventObject = factory(s);
+                                var jsonString = JsonConvert.SerializeObject(mappedEventObject);
+                                var partionId = partitionKeyFinder(mappedEventObject);
+                                return new PartitionedEventData(partionId, new EventData(Encoding.UTF8.GetBytes(jsonString)));
                             })
+                            .GroupBy(r => r.PartitionID)
                             .Partition();
+
                         int i = 0;
                         foreach (var batch in batches)
                         {
@@ -97,9 +102,13 @@
 
             var rideConnectionString = Environment.GetEnvironmentVariable("RIDE_EVENT_HUB");
             var fareConnectionString = Environment.GetEnvironmentVariable("FARE_EVENT_HUB");
-            var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH"); 
+            var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH");
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
-            
+
+
+            rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1VxG9DoBDA7jxxAkff2rBwemr7GdfF3iXNBHAC5QlAU=;EntityPath=streamstartpersecond";
+            fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=YfVB6xJNl68uR0Cu3/O++160snebGb89ZXGwwWSGfOM=;EntityPath=eventhub1";
+            rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
                 throw new ArgumentException("rideConnectionString must be provided");
@@ -116,24 +125,26 @@
             }
 
             var rideDataFiles = Directory.EnumerateFiles(rideDataFilePath)
-                                    .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_data") )
-                                    .OrderBy (p => {
+                                    .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_data"))
+                                    .OrderBy(p =>
+                                    {
                                         var filename = Path.GetFileNameWithoutExtension(p);
                                         var indexString = filename.Substring(filename.LastIndexOf('_') + 1);
                                         var index = int.TryParse(indexString, out int i) ? i : throw new ArgumentException("tripdata file must be named in format trip_data_*.zip");
                                         return index;
                                     }).ToArray();
-                                   
+
 
             var fareDataFiles = Directory.EnumerateFiles(rideDataFilePath)
-                            .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_fare") )
-                            .OrderBy(p => {
+                            .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_fare"))
+                            .OrderBy(p =>
+                            {
                                 var filename = Path.GetFileNameWithoutExtension(p);
                                 var indexString = filename.Substring(filename.LastIndexOf('_') + 1);
                                 var index = int.TryParse(indexString, out int i) ? i : throw new ArgumentException("tripfare file must be named in format trip_fare_*.zip");
                                 return index;
                             }).ToArray();
-            
+
             if (rideDataFiles.Length == 0)
             {
                 throw new ArgumentException($"trip data files at {rideDataFilePath} does not exist");
@@ -156,7 +167,8 @@
             public AsyncConsole(CancellationToken cancellationToken = default(CancellationToken))
             {
                 _cancellationToken = cancellationToken;
-                _writerTask = Task.Factory.StartNew((state) => {
+                _writerTask = Task.Factory.StartNew((state) =>
+                {
                     var token = (CancellationToken)state;
                     string msg;
                     while (!token.IsCancellationRequested)
@@ -197,24 +209,25 @@
                     arguments.FareConnectionString
                 );
 
-        
+
                 CancellationTokenSource cts = arguments.MillisecondsToRun == 0 ? new CancellationTokenSource() :
                     new CancellationTokenSource(arguments.MillisecondsToRun);
-                Console.CancelKeyPress += (s, e) => {
+                Console.CancelKeyPress += (s, e) =>
+                {
                     //Console.WriteLine("Cancelling data generation");
                     cts.Cancel();
                     e.Cancel = true;
                 };
-           
-            
+
+
                 AsyncConsole console = new AsyncConsole(cts.Token);
-               
-                var rideTask = ReadData<TaxiRide>(arguments.RideDataFiles,   
-                    TaxiRide.FromString, rideClient, 100, console, cts.Token);
+
+                var rideTask = ReadData<TaxiRide>(arguments.RideDataFiles,
+                    TaxiRide.FromString, TaxiRide.GetPartitionKey, rideClient, 100, console, cts.Token);
                 var fareTask = ReadData<TaxiFare>(arguments.TripDataFiles,
-                    TaxiFare.FromString, fareClient, 200, console, cts.Token);
+                    TaxiFare.FromString, TaxiFare.GetPartitionKey, fareClient, 200, console, cts.Token);
                 await Task.WhenAll(rideTask, fareTask, console.WriterTask);
-            
+
                 Console.WriteLine("Data generation complete");
             }
             catch (ArgumentException ae)
