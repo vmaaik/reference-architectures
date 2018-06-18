@@ -64,6 +64,9 @@ namespace taxi
            , HackLicense.ToString()
            , VendorId
            );
+
+            // return Medallion.ToString();
+           
         }
 
 

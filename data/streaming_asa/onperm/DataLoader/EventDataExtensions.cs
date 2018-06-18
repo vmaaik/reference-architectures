@@ -6,23 +6,27 @@ namespace taxi
 {
     public static class EventDataExtensions
     {
-        public static IEnumerable<EventDataBatch> Partition
-            (this IEnumerable<IGrouping<string, PartitionedEventData>> source, int batchSize = 10, string partitionKey = null)
+        // public static Dictionary<string,EventDataBatch>  dictionary = new Dictionary<string,EventDataBatch>();
+        public static IEnumerable<EventDataBatch> Partition(this IEnumerable<IGrouping<string, PartitionedEventData>> source, int batchSize = 3, string partitionKey = null)
         {
-
-            foreach (IEnumerable<PartitionedEventData> partionedEventDataList in source)
+            foreach (var group in source)
             {
-                EventDataBatch eventDataBatch = new EventDataBatch(batchSize, partionedEventDataList.First().PartitionID);
-                foreach (var partionedEventData in partionedEventDataList)
+                // batch size is based on the goup by results 
+                EventDataBatch eventDataBatch = new EventDataBatch(group.Count(), group.Key);
+
+                int i = 0;
+                foreach (var eventData in group)
                 {
-                    if (!eventDataBatch.TryAdd(partionedEventData.EventData))
+                    ++i;
+                    if (!eventDataBatch.TryAdd(eventData.EventData))
                     {
                         yield return eventDataBatch;
-
-                        eventDataBatch = new EventDataBatch(batchSize, partionedEventData.PartitionID);
-                        eventDataBatch.TryAdd(partionedEventData.EventData);
+                        eventDataBatch = new EventDataBatch(group.LongCount()-i, group.Key);
+                        // It will be small enough in our case, but we should probably figure out a better way later
+                        eventDataBatch.TryAdd(eventData.EventData);
                     }
                 }
+
                 if (eventDataBatch.Count > 0)
                 {
                     yield return eventDataBatch;
@@ -30,6 +34,7 @@ namespace taxi
 
 
             }
+
         }
     }
 }

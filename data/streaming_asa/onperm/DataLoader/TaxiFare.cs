@@ -50,11 +50,14 @@ namespace taxi
         public string BuildPartitionKey()
         {
 
-            return String.Format("{0}_{1}_{2}"
-           , Medallion.ToString()
-           , HackLicense.ToString()
-           , VendorId
-           );
+                return String.Format("{0}_{1}_{2}"
+               , Medallion.ToString()
+               , HackLicense.ToString()
+               , VendorId
+               );
+
+            //    return Medallion.ToString();
+           
         }
 
         public static TaxiFare FromString(string line)
@@ -98,7 +101,7 @@ namespace taxi
 
         public static string GetPartitionKey(TaxiFare taxiFare)
         {
-                return taxiFare.PartitionKey;
+            return taxiFare.PartitionKey;
         }
     }
 }

@@ -38,60 +38,59 @@
                 throw new ArgumentNullException(nameof(console));
             }
 
+
+            string typeName = "";
+            Random random = new Random(randomSeed);
             foreach (var path in pathList)
             {
-                string typeName = typeof(T).Name;
-                Random random = new Random(randomSeed);
+                typeName = typeof(T).Name;
+
                 ZipArchive archive = new ZipArchive(
                     File.OpenRead(path),
                     ZipArchiveMode.Read);
-                //Console.WriteLine(archive.Entries.Count);
                 foreach (var entry in archive.Entries)
                 {
+                    int i = 0;
                     using (var reader = new StreamReader(entry.Open()))
                     {
-                        int lines = 0;
+                        // int lines = 0;
                         var batches = reader.ReadLines()
-                            .Skip(1)
-                            .Select(s =>
-                            {
+                             .Skip(1)
+                             .Select(s =>
+                             {
 
-                                var mappedEventObject = factory(s);
-                                var jsonString = JsonConvert.SerializeObject(mappedEventObject);
-                                var partionId = partitionKeyFinder(mappedEventObject);
-                                return new PartitionedEventData(partionId, new EventData(Encoding.UTF8.GetBytes(jsonString)));
-                            })
-                            .GroupBy(r => r.PartitionID)
-                            .Partition();
+                                 var rideContents = s.Split(',');
+                                 var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
+                                 return new PartitionedEventData(key, new EventData(Encoding.UTF8.GetBytes(
+                                    JsonConvert.SerializeObject(factory(s)))));
+                             })
+                             .GroupBy(r => r.PartitionID)
+                             .Partition();
 
-                        int i = 0;
+
                         foreach (var batch in batches)
                         {
-                            // Wait for a random interval to introduce some delays.
-                            await Task.Delay(random.Next(100, 1000))
-                                .ConfigureAwait(false);
-                            await client.SendAsync(batch)
-                                .ConfigureAwait(false);
+                            await client.SendAsync(batch).ConfigureAwait(false);
+
                             if (++i % 10 == 0)
                             {
-                                await console.WriteLine($"{typeName} lines consumed: {lines}")
-                                    .ConfigureAwait(false);
                                 await console.WriteLine($"Created {i} {typeName} batches")
-                                    .ConfigureAwait(false);
-                            }
-
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                break;
+                                .ConfigureAwait(false);
                             }
                         }
-
-                        await console.WriteLine($"Created {i} total {typeName} batches")
-                            .ConfigureAwait(false);
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
                     }
+
+                    await console.WriteLine($"Created {i} total {typeName} batches")
+                        .ConfigureAwait(false);
                 }
             }
         }
+
+
 
         private static (string RideConnectionString,
                         string FareConnectionString,
@@ -240,3 +239,5 @@
         }
     }
 }
+
+
