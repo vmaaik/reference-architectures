@@ -41,10 +41,6 @@
                 throw new ArgumentNullException(nameof(console));
             }
 
-
-
-
-
             string typeName = "";
             Random random = new Random(randomSeed);
             foreach (var path in pathList)
@@ -56,47 +52,45 @@
                     ZipArchiveMode.Read);
                 foreach (var entry in archive.Entries)
                 {
-                    var actionBlock = new ActionBlock<PartitionedEventData>(
+                    var actionBlock = new ActionBlock<String>(
                             async (s) =>
                             {
-                                await client.SendAsync(s.EventData, s.PartitionID);
+                                var rideContents = s.Split(',');
+                                var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
+                                await client.SendAsync(new EventData(Encoding.UTF8.GetBytes(
+                                   JsonConvert.SerializeObject(factory(s)))), key);
                             },
                             new ExecutionDataflowBlockOptions
                             {
                                 BoundedCapacity = 10000,
                                 CancellationToken = cancellationToken,
-                                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                                MaxDegreeOfParallelism = 10,
                             }
                         );
                     // int i = 0;
                     using (var reader = new StreamReader(entry.Open()))
                     {
 
-
-                        int lines = 0;
-                        var eventDatas = reader.ReadLines()
+                        var lines = reader.ReadLines()
                              .Skip(1)
-                             .AsParallel().WithDegreeOfParallelism(3).WithMergeOptions(ParallelMergeOptions.NotBuffered)
-                             .Select((s) =>
-                            {
-                                ++lines;
-                                var rideContents = s.Split(',');
-                                var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
-                                return new PartitionedEventData(key, new EventData(Encoding.UTF8.GetBytes(
-                                   JsonConvert.SerializeObject(factory(s)))));
-                            }).ToList();
-
-
-
-
-                        foreach (var eventdata in eventDatas)
+                             .AsParallel().WithDegreeOfParallelism(10).WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                             .ToList();
+                          
+                        int messages = 0;
+                        foreach (var line in lines)
                         {
-                            await actionBlock.SendAsync(eventdata);
+                            
+                            await actionBlock.SendAsync(line).ConfigureAwait(false);
+                            if (++messages % 10000 == 0)
+                            {
+                                await console.WriteLine($"Created {messages} records for {typeName}").ConfigureAwait(false);
+                            }
                         }
 
 
                         actionBlock.Complete();
                         await actionBlock.Completion;
+                        await console.WriteLine($"Created total  {messages} records for {typeName}").ConfigureAwait(false);
                     }
                 }
             }
@@ -120,11 +114,11 @@
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
 
-            rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=t0RI95jN/QuacPSzvqjLs2mfUg49w7701iae9Xg9EsE=;EntityPath=taxiride";
+            // rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=t0RI95jN/QuacPSzvqjLs2mfUg49w7701iae9Xg9EsE=;EntityPath=taxiride";
 
-            // rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
-            // fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
-            fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=Custom;SharedAccessKey=+98V1Kvd8Ob6PwH1dFIZ8SkJxt/jOhXpl5Q/EdOU7A4=;EntityPath=taxifare";
+            rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
+            fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
+            // fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=Custom;SharedAccessKey=+98V1Kvd8Ob6PwH1dFIZ8SkJxt/jOhXpl5Q/EdOU7A4=;EntityPath=taxifare";
             rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
