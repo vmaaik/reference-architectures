@@ -11,10 +11,13 @@
     using System.Threading.Tasks;
     using Microsoft.Azure.EventHubs;
     using Newtonsoft.Json;
+    using System.Threading.Tasks.Dataflow;
+
 
     class Program
     {
-        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory, Func<T, string> partitionKeyFinder,
+
+        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
             EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
         {
 
@@ -39,6 +42,9 @@
             }
 
 
+
+
+
             string typeName = "";
             Random random = new Random(randomSeed);
             foreach (var path in pathList)
@@ -50,45 +56,54 @@
                     ZipArchiveMode.Read);
                 foreach (var entry in archive.Entries)
                 {
-                    int i = 0;
+                    var actionBlock = new ActionBlock<PartitionedEventData>(
+                            async (s) =>
+                            {
+                                await client.SendAsync(s.EventData, s.PartitionID);
+                            },
+                            new ExecutionDataflowBlockOptions
+                            {
+                                BoundedCapacity = 10000,
+                                CancellationToken = cancellationToken,
+                                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                            }
+                        );
+                    // int i = 0;
                     using (var reader = new StreamReader(entry.Open()))
                     {
-                        // int lines = 0;
-                        var batches = reader.ReadLines()
+
+
+                        int lines = 0;
+                        var eventDatas = reader.ReadLines()
                              .Skip(1)
-                             .Select(s =>
-                             {
-
-                                 var rideContents = s.Split(',');
-                                 var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
-                                 return new PartitionedEventData(key, new EventData(Encoding.UTF8.GetBytes(
-                                    JsonConvert.SerializeObject(factory(s)))));
-                             })
-                             .GroupBy(r => r.PartitionID)
-                             .Partition();
-
-
-                        foreach (var batch in batches)
-                        {
-                            await client.SendAsync(batch).ConfigureAwait(false);
-
-                            if (++i % 10 == 0)
+                             .AsParallel().WithDegreeOfParallelism(3).WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                             .Select((s) =>
                             {
-                                await console.WriteLine($"Created {i} {typeName} batches")
-                                .ConfigureAwait(false);
-                            }
-                        }
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-                    }
+                                ++lines;
+                                var rideContents = s.Split(',');
+                                var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
+                                return new PartitionedEventData(key, new EventData(Encoding.UTF8.GetBytes(
+                                   JsonConvert.SerializeObject(factory(s)))));
+                            }).ToList();
 
-                    await console.WriteLine($"Created {i} total {typeName} batches")
-                        .ConfigureAwait(false);
+
+
+
+                        foreach (var eventdata in eventDatas)
+                        {
+                            await actionBlock.SendAsync(eventdata);
+                        }
+
+
+                        actionBlock.Complete();
+                        await actionBlock.Completion;
+                    }
                 }
             }
         }
+
+
+
 
 
 
@@ -105,8 +120,11 @@
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
 
-            rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1VxG9DoBDA7jxxAkff2rBwemr7GdfF3iXNBHAC5QlAU=;EntityPath=streamstartpersecond";
-            fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=YfVB6xJNl68uR0Cu3/O++160snebGb89ZXGwwWSGfOM=;EntityPath=eventhub1";
+            rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=t0RI95jN/QuacPSzvqjLs2mfUg49w7701iae9Xg9EsE=;EntityPath=taxiride";
+
+            // rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
+            // fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
+            fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=Custom;SharedAccessKey=+98V1Kvd8Ob6PwH1dFIZ8SkJxt/jOhXpl5Q/EdOU7A4=;EntityPath=taxifare";
             rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
@@ -222,9 +240,9 @@
                 AsyncConsole console = new AsyncConsole(cts.Token);
 
                 var rideTask = ReadData<TaxiRide>(arguments.RideDataFiles,
-                    TaxiRide.FromString, TaxiRide.GetPartitionKey, rideClient, 100, console, cts.Token);
+                    TaxiRide.FromString, rideClient, 100, console, cts.Token);
                 var fareTask = ReadData<TaxiFare>(arguments.TripDataFiles,
-                    TaxiFare.FromString, TaxiFare.GetPartitionKey, fareClient, 200, console, cts.Token);
+                    TaxiFare.FromString, fareClient, 200, console, cts.Token);
                 await Task.WhenAll(rideTask, fareTask, console.WriterTask);
 
                 Console.WriteLine("Data generation complete");
