@@ -7,6 +7,7 @@ namespace taxi
 
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class TaxiRide : Taxi
+
     {
         public TaxiRide()
         {

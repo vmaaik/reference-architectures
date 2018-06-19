@@ -146,7 +146,7 @@
                         var lines = reader.ReadLines()
                              .Skip(1)
                              .AsParallel().WithDegreeOfParallelism(10).WithMergeOptions(ParallelMergeOptions.NotBuffered)
-                             .ToList();
+                             .Select(s => s);
 
                         int messages = 0;
                         foreach (var line in lines)
