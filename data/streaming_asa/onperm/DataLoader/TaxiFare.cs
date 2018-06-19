@@ -6,20 +6,11 @@ namespace taxi
     using Newtonsoft.Json.Serialization;
 
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-    public class TaxiFare 
+    public class TaxiFare : Taxi
     {
         public TaxiFare()
         {
         }
-
-        [JsonProperty]
-        public long Medallion { get; set; }
-
-        [JsonProperty]
-        public long HackLicense { get; set; }
-
-        [JsonProperty]
-        public string VendorId { get; set; }
 
         [JsonProperty]
 

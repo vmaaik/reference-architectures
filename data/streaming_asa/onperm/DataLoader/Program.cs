@@ -16,6 +16,78 @@
 
     class Program
     {
+        private static async Task ReadDataNew<T>(ICollection<string> pathList, Func<string, T> factory,
+            EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
+            where T : Taxi
+        {
+            if (pathList == null)
+            {
+                throw new ArgumentNullException(nameof(pathList));
+            }
+
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            if (client == null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (console == null)
+            {
+                throw new ArgumentNullException(nameof(console));
+            }
+
+            string typeName = typeof(T).Name;
+            Random random = new Random(randomSeed);
+            BufferBlock<T> buffer = new BufferBlock<T>(new DataflowBlockOptions()
+            {
+                BoundedCapacity = 100
+            });
+            var consumer = new ActionBlock<T>(
+                async (t) =>
+                {
+                    await client.SendAsync(new EventData(Encoding.UTF8.GetBytes(
+                        JsonConvert.SerializeObject(t))), t.PartitionKey);
+                },
+                new ExecutionDataflowBlockOptions
+                {
+                    BoundedCapacity = 10000,
+                    CancellationToken = cancellationToken,
+                    MaxDegreeOfParallelism = 10,
+                }
+            );
+            buffer.LinkTo(consumer, new DataflowLinkOptions()
+            {
+                PropagateCompletion = true
+            });
+
+            foreach (var path in pathList)
+            {
+                ZipArchive archive = new ZipArchive(
+                    File.OpenRead(path),
+                    ZipArchiveMode.Read);
+                foreach (var entry in archive.Entries)
+                {
+                    using (var reader = new StreamReader(entry.Open()))
+                    {
+                        // Start consumer
+                        var lines = reader.ReadLines()
+                             .Skip(1);
+
+                        foreach (var line in lines)
+                        {
+                            await buffer.SendAsync(factory(line));
+                        }
+                    }
+                }
+            }
+
+            buffer.Complete();
+            await Task.WhenAll(buffer.Completion, consumer.Completion);
+        }
 
         private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
             EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
@@ -75,11 +147,11 @@
                              .Skip(1)
                              .AsParallel().WithDegreeOfParallelism(10).WithMergeOptions(ParallelMergeOptions.NotBuffered)
                              .ToList();
-                          
+
                         int messages = 0;
                         foreach (var line in lines)
                         {
-                            
+
                             await actionBlock.SendAsync(line).ConfigureAwait(false);
                             if (++messages % 10000 == 0)
                             {
