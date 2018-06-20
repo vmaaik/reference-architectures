@@ -56,7 +56,7 @@
                 {
                     BoundedCapacity = 10000,
                     CancellationToken = cancellationToken,
-                    MaxDegreeOfParallelism = 10,
+                    MaxDegreeOfParallelism = 30,
                 }
             );
             buffer.LinkTo(consumer, new DataflowLinkOptions()
@@ -136,7 +136,7 @@
                             {
                                 BoundedCapacity = 10000,
                                 CancellationToken = cancellationToken,
-                                MaxDegreeOfParallelism = 10,
+                                MaxDegreeOfParallelism = 30,
                             }
                         );
                     // int i = 0;
