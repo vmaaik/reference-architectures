@@ -16,7 +16,7 @@
 
     class Program
     {
-        private static async Task ReadDataNew<T>(ICollection<string> pathList, Func<string, T> factory,
+        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
             EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
             where T : Taxi
         {
@@ -42,15 +42,19 @@
 
             string typeName = typeof(T).Name;
             Random random = new Random(randomSeed);
+
+            // buffer block that holds the messages . consumer will fetch records from this block asynchronously.
             BufferBlock<T> buffer = new BufferBlock<T>(new DataflowBlockOptions()
             {
                 BoundedCapacity = 100
             });
+
+            // consumer that sends the data to event hub asynchronoulsy.
             var consumer = new ActionBlock<T>(
                 async (t) =>
                 {
                     await client.SendAsync(new EventData(Encoding.UTF8.GetBytes(
-                        JsonConvert.SerializeObject(t))), t.PartitionKey);
+                        JsonConvert.SerializeObject(t))), t.PartitionKey).ConfigureAwait(false);
                 },
                 new ExecutionDataflowBlockOptions
                 {
@@ -59,16 +63,22 @@
                     MaxDegreeOfParallelism = 30,
                 }
             );
+
+            // link the buffer to consumer .
             buffer.LinkTo(consumer, new DataflowLinkOptions()
             {
                 PropagateCompletion = true
             });
 
+            long  messages = 0;
+
+            // iterate through the path list and act on each file from here on 
             foreach (var path in pathList)
             {
                 ZipArchive archive = new ZipArchive(
                     File.OpenRead(path),
                     ZipArchiveMode.Read);
+
                 foreach (var entry in archive.Entries)
                 {
                     using (var reader = new StreamReader(entry.Open()))
@@ -77,9 +87,16 @@
                         var lines = reader.ReadLines()
                              .Skip(1);
 
+
+                        // for each line , send to event hub
                         foreach (var line in lines)
                         {
-                            await buffer.SendAsync(factory(line));
+
+                            await buffer.SendAsync(factory(line)).ConfigureAwait(false);
+                            if (++messages % 10000 == 0)
+                            {
+                                await console.WriteLine($"Created {messages} records for {typeName}").ConfigureAwait(false);
+                            }
                         }
                     }
                 }
@@ -87,90 +104,8 @@
 
             buffer.Complete();
             await Task.WhenAll(buffer.Completion, consumer.Completion);
+            await console.WriteLine($"Created total {messages} records for {typeName}").ConfigureAwait(false);
         }
-
-        private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
-            EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
-        {
-
-            if (pathList == null)
-            {
-                throw new ArgumentNullException(nameof(pathList));
-            }
-
-            if (factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
-
-            if (client == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-
-            if (console == null)
-            {
-                throw new ArgumentNullException(nameof(console));
-            }
-
-            string typeName = "";
-            Random random = new Random(randomSeed);
-            foreach (var path in pathList)
-            {
-                typeName = typeof(T).Name;
-
-                ZipArchive archive = new ZipArchive(
-                    File.OpenRead(path),
-                    ZipArchiveMode.Read);
-                foreach (var entry in archive.Entries)
-                {
-                    var actionBlock = new ActionBlock<String>(
-                            async (s) =>
-                            {
-                                var rideContents = s.Split(',');
-                                var key = String.Format("{0}_{1}_{2}", rideContents[0], rideContents[1], rideContents[2]);
-                                await client.SendAsync(new EventData(Encoding.UTF8.GetBytes(
-                                   JsonConvert.SerializeObject(factory(s)))), key);
-                            },
-                            new ExecutionDataflowBlockOptions
-                            {
-                                BoundedCapacity = 10000,
-                                CancellationToken = cancellationToken,
-                                MaxDegreeOfParallelism = 30,
-                            }
-                        );
-                    // int i = 0;
-                    using (var reader = new StreamReader(entry.Open()))
-                    {
-
-                        var lines = reader.ReadLines()
-                             .Skip(1)
-                             .AsParallel().WithDegreeOfParallelism(10).WithMergeOptions(ParallelMergeOptions.NotBuffered)
-                             .Select(s => s);
-
-                        int messages = 0;
-                        foreach (var line in lines)
-                        {
-
-                            await actionBlock.SendAsync(line).ConfigureAwait(false);
-                            if (++messages % 10000 == 0)
-                            {
-                                await console.WriteLine($"Created {messages} records for {typeName}").ConfigureAwait(false);
-                            }
-                        }
-
-
-                        actionBlock.Complete();
-                        await actionBlock.Completion;
-                        await console.WriteLine($"Created total  {messages} records for {typeName}").ConfigureAwait(false);
-                    }
-                }
-            }
-        }
-
-
-
-
 
 
         private static (string RideConnectionString,
@@ -185,13 +120,11 @@
             var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH");
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
-
-            // rideConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=t0RI95jN/QuacPSzvqjLs2mfUg49w7701iae9Xg9EsE=;EntityPath=taxiride";
-
             rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
             fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
-            // fareConnectionString = "Endpoint=sb://pnp-asa-eh.servicebus.windows.net/;SharedAccessKeyName=Custom;SharedAccessKey=+98V1Kvd8Ob6PwH1dFIZ8SkJxt/jOhXpl5Q/EdOU7A4=;EntityPath=taxifare";
             rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
+           
+           
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
                 throw new ArgumentException("rideConnectionString must be provided");
@@ -207,6 +140,8 @@
                 throw new ArgumentException("rideDataFilePath must be provided");
             }
 
+
+            // get only the ride files in order. trip_data_1.zip gets read before trip_data_2.zip
             var rideDataFiles = Directory.EnumerateFiles(rideDataFilePath)
                                     .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_data"))
                                     .OrderBy(p =>
@@ -217,7 +152,7 @@
                                         return index;
                                     }).ToArray();
 
-
+            // get only the fare files in order
             var fareDataFiles = Directory.EnumerateFiles(rideDataFilePath)
                             .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_fare"))
                             .OrderBy(p =>
@@ -240,7 +175,9 @@
 
             return (rideConnectionString, fareConnectionString, rideDataFiles, fareDataFiles, numberOfMillisecondsToRun);
         }
+        
 
+        // blocking collection that helps to print to console the messages on progress on the read and send of files to event hub.
         private class AsyncConsole
         {
             private BlockingCollection<string> _blockingCollection = new BlockingCollection<string>();
@@ -280,6 +217,8 @@
                 get { return _writerTask; }
             }
         }
+
+        //  start of the read task 
         public static async Task<int> Main(string[] args)
         {
             try
