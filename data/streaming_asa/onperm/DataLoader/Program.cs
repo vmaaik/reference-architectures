@@ -17,7 +17,7 @@
     class Program
     {
         private static async Task ReadData<T>(ICollection<string> pathList, Func<string, T> factory,
-            EventHubClient client, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
+            ObjectPool<EventHubClient> pool, int randomSeed, AsyncConsole console, CancellationToken cancellationToken)
             where T : Taxi
         {
             if (pathList == null)
@@ -30,9 +30,9 @@
                 throw new ArgumentNullException(nameof(factory));
             }
 
-            if (client == null)
+            if (pool == null)
             {
-                throw new ArgumentNullException(nameof(client));
+                throw new ArgumentNullException(nameof(pool));
             }
 
             if (console == null)
@@ -46,21 +46,24 @@
             // buffer block that holds the messages . consumer will fetch records from this block asynchronously.
             BufferBlock<T> buffer = new BufferBlock<T>(new DataflowBlockOptions()
             {
-                BoundedCapacity = 100
+                BoundedCapacity = 100000
             });
 
             // consumer that sends the data to event hub asynchronoulsy.
             var consumer = new ActionBlock<T>(
-                async (t) =>
+             (t) =>
                 {
-                    await client.SendAsync(new EventData(Encoding.UTF8.GetBytes(
-                        JsonConvert.SerializeObject(t))), t.PartitionKey).ConfigureAwait(false);
+                    using (var client = pool.GetObject())
+                    {
+                        return client.Value.SendAsync(new EventData(Encoding.UTF8.GetBytes(
+                            JsonConvert.SerializeObject(t))), t.PartitionKey);
+                    }
                 },
                 new ExecutionDataflowBlockOptions
                 {
-                    BoundedCapacity = 10000,
+                    BoundedCapacity = 100000,
                     CancellationToken = cancellationToken,
-                    MaxDegreeOfParallelism = 30,
+                    MaxDegreeOfParallelism = 100,
                 }
             );
 
@@ -70,7 +73,7 @@
                 PropagateCompletion = true
             });
 
-            long  messages = 0;
+            long messages = 0;
 
             // iterate through the path list and act on each file from here on 
             foreach (var path in pathList)
@@ -95,6 +98,9 @@
                             await buffer.SendAsync(factory(line)).ConfigureAwait(false);
                             if (++messages % 10000 == 0)
                             {
+                                // random delay every 10000 messages are buffered ??     
+                                await Task.Delay(random.Next(100, 1000))
+                                    .ConfigureAwait(false);
                                 await console.WriteLine($"Created {messages} records for {typeName}").ConfigureAwait(false);
                             }
                         }
@@ -123,8 +129,8 @@
             rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
             fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
             rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
-           
-           
+
+
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
                 throw new ArgumentException("rideConnectionString must be provided");
@@ -175,7 +181,7 @@
 
             return (rideConnectionString, fareConnectionString, rideDataFiles, fareDataFiles, numberOfMillisecondsToRun);
         }
-        
+
 
         // blocking collection that helps to print to console the messages on progress on the read and send of files to event hub.
         private class AsyncConsole
@@ -244,10 +250,13 @@
 
                 AsyncConsole console = new AsyncConsole(cts.Token);
 
+                var rideClientPool = new ObjectPool<EventHubClient>(() => EventHubClient.CreateFromConnectionString(arguments.RideConnectionString), 100);
+                var fareClientPool = new ObjectPool<EventHubClient>(() => EventHubClient.CreateFromConnectionString(arguments.FareConnectionString), 100);
+
                 var rideTask = ReadData<TaxiRide>(arguments.RideDataFiles,
-                    TaxiRide.FromString, rideClient, 100, console, cts.Token);
+                    TaxiRide.FromString, rideClientPool, 100, console, cts.Token);
                 var fareTask = ReadData<TaxiFare>(arguments.TripDataFiles,
-                    TaxiFare.FromString, fareClient, 200, console, cts.Token);
+                    TaxiFare.FromString, fareClientPool, 200, console, cts.Token);
                 await Task.WhenAll(rideTask, fareTask, console.WriterTask);
 
                 Console.WriteLine("Data generation complete");
