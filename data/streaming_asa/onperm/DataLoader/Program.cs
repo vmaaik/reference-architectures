@@ -146,7 +146,10 @@
                 throw new ArgumentException("rideDataFilePath must be provided");
             }
 
-
+            if (!Directory.Exists(rideDataFilePath))
+            {
+                throw new ArgumentException("ride file path doesnot exists");
+            }
             // get only the ride files in order. trip_data_1.zip gets read before trip_data_2.zip
             var rideDataFiles = Directory.EnumerateFiles(rideDataFilePath)
                                     .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_data"))
