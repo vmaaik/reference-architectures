@@ -7,8 +7,6 @@ name='docdb-taxicab'
 databaseName='docdb-taxicab-database'
 collectionName='docdb-taxicabavgtrippermile-collection'
 
-echo $resourceGroupName
-az group list >> text.txt
 # Create a resource group
 az group create --name $resourceGroupName --location $location
 
