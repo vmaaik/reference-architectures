@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 # Set variables for the new account, database, and collection
 resourceGroupName='asa-ra-1-stream1'
 location='southcentralus'
@@ -18,3 +20,7 @@ az cosmosdb database create --name $name --db-name $databaseName --resource-grou
 
 # Create a collection
 az cosmosdb collection create --collection-name $collectionName --name $name --db-name $databaseName --resource-group $resourceGroupName
+
+
+# Create 2 event hub , one storage account and a asa job
+az group deployment create --resource-group $resourceGroupName --template-file ./deploy.json --parameters eventHubNamespace="taxi" outputStorageAccountName="taxi"
