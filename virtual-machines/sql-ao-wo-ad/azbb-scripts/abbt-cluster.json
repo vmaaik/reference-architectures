@@ -143,7 +143,7 @@
                   "autoUpgradeMinorVersion": true,
                   "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "Infrastructure.ps1",
                         "function": "Infrastructure"
                       }
@@ -179,7 +179,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "Cluster.ps1",
                         "function": "Cluster"
                       }
@@ -214,7 +214,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "ClusterNode1.ps1",
                         "function": "ClusterNode1"
                       }
@@ -248,7 +248,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "ClusterNode2.ps1",
                         "function": "ClusterNode2"
                       }
@@ -283,7 +283,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "ClusterSqls.ps1",
                         "function": "ClusterSqls"
                       }
@@ -317,7 +317,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "ClusterSqls.1.ps1",
                         "function": "ClusterSqls1"
                       }
@@ -351,7 +351,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "configuration": {
-                        "url": "https://lugizidscstorage.blob.core.windows.net/isos/sql.zip",
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
                         "script": "ClusterSqls.2.ps1",
                         "function": "ClusterSqls2"
                       }
