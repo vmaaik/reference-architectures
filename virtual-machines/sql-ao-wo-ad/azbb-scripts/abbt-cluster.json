@@ -1,0 +1,375 @@
+{
+    "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "buildingBlocks": {
+        "value": [
+          {
+            "type": "VirtualNetwork",
+            "settings": [
+              {
+                "name": "sqlao-vnet",
+                "addressPrefixes": [
+                  "172.18.0.0/24"
+                ],
+                "subnets": [
+                  {
+                    "name": "default",
+                    "addressPrefix": "172.18.0.0/24"
+                  }
+                ],
+                "dnsServers": [
+                  "172.18.0.4",
+                  "168.63.129.16"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachine",
+            "settings": {
+              "vmCount": 1,
+              "namePrefix": "sqljb",
+              "computerNamePrefix": "sqljb",
+              "virtualNetwork": {
+                "name": "sqlao-vnet"
+              },
+              "size": "Standard_DS11_v2",
+              "adminUsername": "testadminuser",
+              "adminPassword": "test$!Passw0rd111",
+              "osType": "windows",
+              "imageReference": {
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2016-Datacenter",
+                "version": "latest"
+              },
+              "nics": [
+                {
+                  "isPublic": true,
+                  "subnetName": "default",
+                  "privateIPAllocationMethod": "Static",
+                  "startingIPAddress": "172.18.0.5",
+                  "isPrimary": true
+                }
+              ]
+            } 
+          },
+          {
+            "type": "VirtualMachine",
+            "settings": {
+              "vmCount": 1,
+              "namePrefix": "sqldns",
+              "computerNamePrefix": "sqldns",
+              "virtualNetwork": {
+                "name": "sqlao-vnet"
+              },
+              "size": "Standard_DS11_v2",
+              "adminUsername": "testadminuser",
+              "adminPassword": "test$!Passw0rd111",
+              "osType": "windows",
+              "imageReference": {
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2016-Datacenter",
+                "version": "latest"
+              },
+              "nics": [
+                {
+                  "isPublic": false,
+                  "subnetName": "default",
+                  "privateIPAllocationMethod": "Static",
+                  "startingIPAddress": "172.18.0.4",
+                  "isPrimary": true
+                }
+              ]
+            } 
+          },
+          {
+            "type": "VirtualMachine",
+            "settings": {
+              "vmCount": 2,
+              "namePrefix": "sqlao",
+              "computerNamePrefix": "sqlao",
+              "virtualNetwork": {
+                "name": "sqlao-vnet"
+              },
+              "size": "Standard_DS11_v2",
+              "adminUsername": "testadminuser",
+              "adminPassword": "test$!Passw0rd111",
+              "osType": "windows",
+              "imageReference": {
+                "publisher": "MicrosoftSQLServer",
+                "offer": "SQL2016SP1-WS2016",
+                "sku": "Standard",
+                "version": "latest"
+              },
+              "availabilitySet": {
+                "name": "sqlao-as"
+              },
+              "nics": [
+                {
+                  "isPublic": false,
+                  "subnetName": "default",
+                  "privateIPAllocationMethod": "Static",
+                  "startingIPAddress": "172.18.0.10",
+                  "isPrimary": true
+                }
+              ],
+              "dataDisks": {
+                "count": 1,
+                "diskSizeGB": 127,
+                "caching": "None",
+                "createOption": "empty"
+              },
+              "storageAccounts": {
+                "count": 2
+              }
+            } 
+          },
+          {
+            "type":"VirtualMachineExtension",
+            "settings":[
+            {
+              "vms": [
+                "sqldns-vm1"
+              ],
+              "extensions": [              
+                {
+                  "name": "sql",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "Infrastructure.ps1",
+                        "function": "Infrastructure"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "DomainName": "lugizi.ao.contoso.com",
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm1", 
+                  "sqlao-vm2"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "Cluster.ps1",
+                        "function": "Cluster"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "DomainName": "lugizi.ao.contoso.com",
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm1"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "ClusterNode1.ps1",
+                        "function": "ClusterNode1"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm2"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "ClusterNode2.ps1",
+                        "function": "ClusterNode2"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm1", 
+                  "sqlao-vm2"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "ClusterSqls.ps1",
+                        "function": "ClusterSqls"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm1"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "ClusterSqls.1.ps1",
+                        "function": "ClusterSqls1"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "VirtualMachineExtension",
+            "settings":[
+              {
+                "vms": [
+                  "sqlao-vm2"
+                ],
+                "extensions": [
+                  {
+                    "name": "sql",
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.7",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "configuration": {
+                        "url": "https://github.com/luisgmsft/reference-architectures/raw/3937bd66ce4dd1057827ec041f0bab6f857011f1/scripts/windows/dsc/sql.zip",
+                        "script": "ClusterSqls.2.ps1",
+                        "function": "ClusterSqls2"
+                      }
+                    },
+                    "protectedSettings": {
+                      "configurationArguments": {
+                        "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": "test$!Passw0rd111"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
