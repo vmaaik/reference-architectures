@@ -126,11 +126,6 @@
             var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH");
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
-            rideConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=eQkKpdqu2PkHy8kGoFSOppbomucsacWJNvAwBzgcfI4=;EntityPath=taxiride";
-            fareConnectionString = "Endpoint=sb://pnpasarg.servicebus.windows.net/;SharedAccessKeyName=custom;SharedAccessKey=1CBjSvMRnAjcLUGELWPI4pqNFzi+Ybu6g9jA0Y0mOUI=;EntityPath=taxifare";
-            rideDataFilePath = "D:\\reference-architectures\\data\\streaming_asa\\onperm\\DataFile";
-
-
             if (string.IsNullOrWhiteSpace(rideConnectionString))
             {
                 throw new ArgumentException("rideConnectionString must be provided");
