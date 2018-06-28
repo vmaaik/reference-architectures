@@ -5,7 +5,13 @@
     "eventHubNamespace": {
       "type": "string"
     },
-    "outputStorageAccountName": {
+    "outputCosmosDatabaseAccount": {
+      "type": "string"
+    },
+    "outputCosmosDatabase": {
+      "type": "string"
+    },
+    "outputCosmosDatabaseCollection": {
       "type": "string"
     }
   },
@@ -19,22 +25,9 @@
     "taxiFareConsumerGroup": "[concat(variables('taxiFareEventHub'), '-asa-consumer-group')]",
     "taxiFareConsumerGroupResourceId": "[concat(resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespace'), variables('taxiFareEventHub')), '/consumergroups/', variables('taxiFareConsumerGroup'))]",
     "taxiFareSharedAccessPolicy": "[concat(variables('taxiFareEventHub'), '-asa-access-policy')]",
-    "taxiFareSharedAccessPolicyResourceId": "[concat(resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespace'), variables('taxiFareEventHub')), '/authorizationRules/', variables('taxiFareSharedAccessPolicy'))]",
+    "taxiFareSharedAccessPolicyResourceId": "[concat(resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespace'), variables('taxiFareEventHub')), '/authorizationRules/', variables('taxiFareSharedAccessPolicy'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('outputStorageAccountName')]",
-      "apiVersion": "2018-02-01",
-      "kind": "BlobStorage",
-      "sku": {
-        "name": "Standard_GRS"
-      },
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "accessTier": "Hot"
-      }
-    },
     {
       "type": "Microsoft.EventHub/namespaces",
       "name": "[parameters('eventHubNamespace')]",
@@ -193,25 +186,20 @@
             "name": "TaxiDrain",
             "properties": {
               "datasource": {
-                "type": "Microsoft.Storage/Blob",
+                "type": "Microsoft.Storage/DocumentDB",
                 "properties": {
-                  "blobPathPrefix": "",
-                  "storageAccounts": [
-                    {
-                      "accountName": "[parameters('outputStorageAccountName')]",
-                      "accountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('outputStorageAccountName')), '2016-12-01').keys[0].value]"
-                    }
-                  ],
-                  "container": "drain",
-                  "pathPattern": "",
-                  "dateFormat": "yyyy/MM/dd",
-                  "timeFormat": "HH"
+                  "accountId": "[parameters('outputCosmosDatabaseAccount')]",
+                  "accountKey": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('outputCosmosDatabaseAccount')), '2015-04-08').primaryMasterKey]",
+                  "database": "[parameters('outputCosmosDatabase')]",
+                  "collectionNamePattern": "[parameters('outputCosmosDatabaseCollection')]",
+                  "partitionKey": null,
+                  "documentId": "WindowTime"
                 }
               },
               "serialization": {
-                "type": "Csv",
+                "type": "Json",
                 "properties": {
-                  "fieldDelimiter": ",",
+                  "format": "LineSeparated",
                   "encoding": "UTF8"
                 }
               }
@@ -227,7 +215,6 @@
         }
       },
       "dependsOn": [
-        "[parameters('outputStorageAccountName')]",
         "[variables('taxiRideSharedAccessPolicyResourceId')]",
         "[variables('taxiFareSharedAccessPolicyResourceId')]",
         "[variables('taxiRideConsumerGroupResourceId')]",
