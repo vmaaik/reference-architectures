@@ -126,20 +126,20 @@
             var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH");
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
-            if (string.IsNullOrWhiteSpace(rideConnectionString))
-            {
-                throw new ArgumentException("rideConnectionString must be provided");
-            }
+            // if (string.IsNullOrWhiteSpace(rideConnectionString))
+            // {
+            //     throw new ArgumentException("rideConnectionString must be provided");
+            // }
 
-            if (string.IsNullOrWhiteSpace(fareConnectionString))
-            {
-                throw new ArgumentException("fareConnectionString must be provided");
-            }
+            // if (string.IsNullOrWhiteSpace(fareConnectionString))
+            // {
+            //     throw new ArgumentException("fareConnectionString must be provided");
+            // }
 
-            if (string.IsNullOrWhiteSpace(rideDataFilePath))
-            {
-                throw new ArgumentException("rideDataFilePath must be provided");
-            }
+            // if (string.IsNullOrWhiteSpace(rideDataFilePath))
+            // {
+            //     throw new ArgumentException("rideDataFilePath must be provided");
+            // }
 
             var currentDirectory = Directory.GetCurrentDirectory();
             Console.WriteLine(currentDirectory);
@@ -149,7 +149,14 @@
 
             foreach (string dir in dirs)
             {
-                Console.WriteLine(dir);
+                Console.WriteLine(dir+"---> directory");
+                var files = Directory.GetFiles(dir);
+
+                foreach(string file in files)
+                {
+                    Console.WriteLine(file+"---> files");
+                }
+                
             }
 
 
