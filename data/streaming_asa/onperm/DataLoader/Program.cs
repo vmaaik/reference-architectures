@@ -126,20 +126,20 @@
             var rideDataFilePath = Environment.GetEnvironmentVariable("RIDE_DATA_FILE_PATH");
             var numberOfMillisecondsToRun = (int.TryParse(Environment.GetEnvironmentVariable("SECONDS_TO_RUN"), out int temp) ? temp : 0) * 1000;
 
-            // if (string.IsNullOrWhiteSpace(rideConnectionString))
-            // {
-            //     throw new ArgumentException("rideConnectionString must be provided");
-            // }
+            if (string.IsNullOrWhiteSpace(rideConnectionString))
+            {
+                throw new ArgumentException("rideConnectionString must be provided");
+            }
 
-            // if (string.IsNullOrWhiteSpace(fareConnectionString))
-            // {
-            //     throw new ArgumentException("fareConnectionString must be provided");
-            // }
+            if (string.IsNullOrWhiteSpace(fareConnectionString))
+            {
+                throw new ArgumentException("fareConnectionString must be provided");
+            }
 
-            // if (string.IsNullOrWhiteSpace(rideDataFilePath))
-            // {
-            //     throw new ArgumentException("rideDataFilePath must be provided");
-            // }
+            if (string.IsNullOrWhiteSpace(rideDataFilePath))
+            {
+                throw new ArgumentException("rideDataFilePath must be provided");
+            }
 
             var currentDirectory = Directory.GetCurrentDirectory();
             Console.WriteLine(currentDirectory);
@@ -149,22 +149,26 @@
 
             foreach (string dir in dirs)
             {
-                Console.WriteLine(dir+"---> directory");
+                Console.WriteLine(dir + "---> directory");
                 var files = Directory.GetFiles(dir);
 
-                foreach(string file in files)
+                foreach (string file in files)
                 {
-                    Console.WriteLine(file+"---> files");
+                    Console.WriteLine(file + "---> files");
                 }
-                
+
             }
 
+            var file1 = Directory.EnumerateFiles(rideDataFilePath).Count();
+
+            Console.WriteLine("filesFound : {0}", file1);
 
 
-            if (!Directory.Exists(rideDataFilePath))
-            {
-                throw new ArgumentException("ride file path doesnot exists");
-            }
+
+            // if (!Directory.Exists(rideDataFilePath))
+            // {
+            //     throw new ArgumentException("ride file path doesnot exists");
+            // }
             // get only the ride files in order. trip_data_1.zip gets read before trip_data_2.zip
             var rideDataFiles = Directory.EnumerateFiles(rideDataFilePath)
                                     .Where(p => Path.GetFileNameWithoutExtension(p).Contains("trip_data"))
