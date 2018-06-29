@@ -148,6 +148,7 @@
             var dirs = Directory.GetDirectories(Directory.GetCurrentDirectory());
 
             Console.WriteLine("updated code directory");
+            Console.WriteLine(rideDataFilePath + "--- this is the ride data file path");
             foreach (string dir in dirs)
             {
                 Console.WriteLine(dir + "---> directory");
