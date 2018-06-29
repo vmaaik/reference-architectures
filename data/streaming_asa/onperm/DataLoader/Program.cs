@@ -150,7 +150,11 @@
             foreach (string dir in dirs)
             {
                 Console.WriteLine(dir + "---> directory");
-                var files = Directory.GetFiles(dir);
+
+                var files = Directory.EnumerateFiles(dir).ToArray();
+
+                
+                // var files = Directory.GetFiles(dir);
 
                 foreach (string file in files)
                 {
@@ -159,11 +163,8 @@
 
             }
 
-            var file1 = Directory.EnumerateFiles(rideDataFilePath).Count();
-
-            Console.WriteLine("filesFound : {0}", file1);
-
-
+           
+            
 
             // if (!Directory.Exists(rideDataFilePath))
             // {
