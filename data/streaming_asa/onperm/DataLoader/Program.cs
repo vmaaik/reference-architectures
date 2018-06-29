@@ -145,6 +145,15 @@
             Console.WriteLine(currentDirectory);
 
 
+            var dirs = Directory.GetDirectories(Directory.GetCurrentDirectory());
+
+            foreach (string dir in dirs)
+            {
+                Console.WriteLine(dir);
+            }
+
+
+
             if (!Directory.Exists(rideDataFilePath))
             {
                 throw new ArgumentException("ride file path doesnot exists");
