@@ -141,6 +141,10 @@
                 throw new ArgumentException("rideDataFilePath must be provided");
             }
 
+            var currentDirectory = Directory.GetCurrentDirectory();
+            Console.WriteLine(currentDirectory);
+
+
             if (!Directory.Exists(rideDataFilePath))
             {
                 throw new ArgumentException("ride file path doesnot exists");
