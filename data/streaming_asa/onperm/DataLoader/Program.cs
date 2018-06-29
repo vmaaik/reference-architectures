@@ -147,13 +147,14 @@
 
             var dirs = Directory.GetDirectories(Directory.GetCurrentDirectory());
 
+            Console.WriteLine("updated code directory");
             foreach (string dir in dirs)
             {
                 Console.WriteLine(dir + "---> directory");
 
                 var files = Directory.EnumerateFiles(dir).ToArray();
 
-                
+
                 // var files = Directory.GetFiles(dir);
 
                 foreach (string file in files)
@@ -163,8 +164,8 @@
 
             }
 
-           
-            
+
+
 
             // if (!Directory.Exists(rideDataFilePath))
             // {
