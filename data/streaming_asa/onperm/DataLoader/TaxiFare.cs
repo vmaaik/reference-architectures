@@ -5,23 +5,16 @@ namespace taxi
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
-    [JsonObject(NamingStrategyType=typeof(CamelCaseNamingStrategy))]
-    public class TaxiFare
+    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
+    public class TaxiFare : Taxi
+
     {
         public TaxiFare()
         {
         }
 
         [JsonProperty]
-        public long Medallion { get; set; }
 
-        [JsonProperty]
-        public long HackLicense { get; set; }
-
-        [JsonProperty]
-        public string VendorId { get; set; }
-
-        [JsonProperty]
         public DateTimeOffset PickupTime { get; set; }
 
         [JsonProperty]
@@ -75,12 +68,18 @@ namespace taxi
                 ride.TipAmount = float.TryParse(tokens[8], out result) ? result : 0.0f;
                 ride.TollsAmount = float.TryParse(tokens[9], out result) ? result : 0.0f;
                 ride.TotalAmount = float.TryParse(tokens[10], out result) ? result : 0.0f;
+                ride.CsvString = line;
                 return ride;
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Invalid record: {line}", ex);
             }
+        }
+
+        public override string GetJsonString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
