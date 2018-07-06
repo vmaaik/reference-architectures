@@ -173,8 +173,9 @@
                 "type": "None"
               },
               "serialization": {
-                "type": "Json",
+                "type": "Csv",
                 "properties": {
+                  "fieldDelimiter": ",",
                   "encoding": "UTF8"
                 }
               }

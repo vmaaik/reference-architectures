@@ -38,7 +38,7 @@ namespace Taxi
         [JsonProperty]
         public float TotalAmount { get; set; }
 
-        public static TaxiFare FromString(string line)
+        public static TaxiFare FromString(string line, string header)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
@@ -52,6 +52,8 @@ namespace Taxi
             }
 
             var ride = new TaxiFare();
+            ride.CsvHeader = header;
+            ride.CsvString = line;
             try
             {
                 ride.Medallion = long.Parse(tokens[0]);
@@ -68,7 +70,6 @@ namespace Taxi
                 ride.TipAmount = float.TryParse(tokens[8], out result) ? result : 0.0f;
                 ride.TollsAmount = float.TryParse(tokens[9], out result) ? result : 0.0f;
                 ride.TotalAmount = float.TryParse(tokens[10], out result) ? result : 0.0f;
-                ride.CsvString = line;
                 return ride;
             }
             catch (Exception ex)
