@@ -21,11 +21,18 @@ namespace Taxi
         [JsonProperty]
         public string VendorId { get; set; }
 
+        [JsonProperty]
+        public DateTimeOffset PickupTime { get; set; }
+
         [JsonIgnore]
         public string PartitionKey
         {
             get => $"{Medallion}_{HackLicense}_{VendorId}";
         }
+
+        [JsonIgnore]
+        protected string CsvHeader { get; set; }  
+
 
         [JsonIgnore]
         protected string CsvString { get; set; }
@@ -34,7 +41,7 @@ namespace Taxi
         {
             if (dataFormat == DataFormat.Csv)
             {
-                return CsvString;
+                return $"{CsvHeader}\r\n{CsvString}";
             }
             else if (dataFormat == DataFormat.Json)
             {
