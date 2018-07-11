@@ -1,8 +1,8 @@
 ﻿[CmdletBinding()]
 Param(
 	[string]$SafeModePassword = "SafeModeP@ssw0rd",
-	[string]$DomainName = "contoso.com",
-	[string]$DomainNetbiosName = "CONTOSO"
+	[string]$DomainName = "bjssdemo.com",
+	[string]$DomainNetbiosName = "BJSSDEMO"
 )
 
 $ErrorActionPreference = "Stop"
